@@ -1,0 +1,47 @@
+[
+  {
+    "timestamp": "2026-08-19T09:10:00Z",
+    "event_type": "connection_blocked",
+    "source_ip": "192.0.2.50",
+    "destination_ip": "198.51.100.10",
+    "destination_port": 22,
+    "protocol": "TCP",
+    "action": "blocked"
+  },
+  {
+    "timestamp": "2026-08-19T09:12:00Z",
+    "event_type": "connection_allowed",
+    "source_ip": "192.0.2.25",
+    "destination_ip": "203.0.113.20",
+    "destination_port": 443,
+    "protocol": "TCP",
+    "action": "allowed"
+  },
+  {
+    "timestamp": "2026-08-19T09:14:00Z",
+    "event_type": "connection_blocked",
+    "source_ip": "198.51.100.45",
+    "destination_ip": "203.0.113.30",
+    "destination_port": 3389,
+    "protocol": "TCP",
+    "action": "blocked"
+  },
+  {
+    "timestamp": "2026-08-19T09:16:00Z",
+    "event_type": "connection_allowed",
+    "source_ip": "192.0.2.25",
+    "destination_ip": "203.0.113.40",
+    "destination_port": 443,
+    "protocol": "TCP",
+    "action": "allowed"
+  },
+  {
+    "timestamp": "2026-08-19T09:18:00Z",
+    "event_type": "connection_blocked",
+    "source_ip": "203.0.113.55",
+    "destination_ip": "192.0.2.100",
+    "destination_port": 445,
+    "protocol": "TCP",
+    "action": "blocked"
+  }
+]

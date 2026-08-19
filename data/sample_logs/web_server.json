@@ -1,0 +1,47 @@
+[
+  {
+    "timestamp": "2026-08-19T09:15:00Z",
+    "event_type": "http_request",
+    "source_ip": "192.0.2.25",
+    "url": "/login",
+    "method": "GET",
+    "status_code": 200,
+    "user_agent": "Mozilla/5.0"
+  },
+  {
+    "timestamp": "2026-08-19T09:16:00Z",
+    "event_type": "http_request",
+    "source_ip": "198.51.100.45",
+    "url": "/admin/login",
+    "method": "POST",
+    "status_code": 401,
+    "user_agent": "Mozilla/5.0"
+  },
+  {
+    "timestamp": "2026-08-19T09:17:00Z",
+    "event_type": "http_request",
+    "source_ip": "198.51.100.45",
+    "url": "/admin/login",
+    "method": "POST",
+    "status_code": 401,
+    "user_agent": "Mozilla/5.0"
+  },
+  {
+    "timestamp": "2026-08-19T09:18:00Z",
+    "event_type": "http_request",
+    "source_ip": "192.0.2.25",
+    "url": "/dashboard",
+    "method": "GET",
+    "status_code": 200,
+    "user_agent": "Mozilla/5.0"
+  },
+  {
+    "timestamp": "2026-08-19T09:20:00Z",
+    "event_type": "suspicious_request",
+    "source_ip": "203.0.113.55",
+    "url": "/suspicious-test-path",
+    "method": "GET",
+    "status_code": 404,
+    "user_agent": "TestScanner/1.0"
+  }
+]

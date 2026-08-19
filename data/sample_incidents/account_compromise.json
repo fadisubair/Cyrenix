@@ -1,0 +1,36 @@
+{
+  "incident_id": "INC-004",
+  "title": "Suspicious Account Activity",
+  "type": "account_compromise",
+  "severity": "MEDIUM",
+  "status": "investigating",
+  "description": "A test account showed suspicious login activity from an unexpected synthetic IP address followed by access to a sensitive test resource.",
+  "username": "john",
+  "hostname": "auth-server",
+  "source_ip": "203.0.113.75",
+  "affected_resource": "/test-sensitive-dashboard",
+  "iocs": [
+    {
+      "type": "ip",
+      "value": "203.0.113.75"
+    },
+    {
+      "type": "username",
+      "value": "john"
+    }
+  ],
+  "timeline": [
+    {
+      "timestamp": "2026-08-19T10:00:00Z",
+      "event": "Login from unusual synthetic IP detected"
+    },
+    {
+      "timestamp": "2026-08-19T10:03:00Z",
+      "event": "Test sensitive dashboard accessed"
+    },
+    {
+      "timestamp": "2026-08-19T10:05:00Z",
+      "event": "Security alert generated"
+    }
+  ]
+}

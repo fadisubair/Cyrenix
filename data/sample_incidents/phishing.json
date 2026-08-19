@@ -1,0 +1,36 @@
+{
+  "incident_id": "INC-001",
+  "title": "Suspicious Phishing Email",
+  "type": "phishing",
+  "severity": "HIGH",
+  "status": "open",
+  "description": "A synthetic phishing email was reported by a test user. The message contained a suspicious link requesting the user to verify account information.",
+  "affected_user": "alice",
+  "source": "email",
+  "sender": "security-alert@test-mail.example",
+  "suspicious_url": "https://login-test.example/verify",
+  "iocs": [
+    {
+      "type": "domain",
+      "value": "login-test.example"
+    },
+    {
+      "type": "email",
+      "value": "security-alert@test-mail.example"
+    }
+  ],
+  "timeline": [
+    {
+      "timestamp": "2026-08-19T07:30:00Z",
+      "event": "Synthetic phishing email received"
+    },
+    {
+      "timestamp": "2026-08-19T07:35:00Z",
+      "event": "User reported suspicious email"
+    },
+    {
+      "timestamp": "2026-08-19T07:40:00Z",
+      "event": "Security team created incident"
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+[
+  {
+    "timestamp": "2026-08-19T08:21:00Z",
+    "event_type": "authentication_failed",
+    "username": "admin",
+    "source_ip": "192.0.2.50",
+    "hostname": "auth-server",
+    "status": "failed"
+  },
+  {
+    "timestamp": "2026-08-19T08:21:15Z",
+    "event_type": "authentication_failed",
+    "username": "admin",
+    "source_ip": "192.0.2.50",
+    "hostname": "auth-server",
+    "status": "failed"
+  },
+  {
+    "timestamp": "2026-08-19T08:21:30Z",
+    "event_type": "authentication_failed",
+    "username": "admin",
+    "source_ip": "192.0.2.50",
+    "hostname": "auth-server",
+    "status": "failed"
+  },
+  {
+    "timestamp": "2026-08-19T08:22:00Z",
+    "event_type": "authentication_success",
+    "username": "john",
+    "source_ip": "192.0.2.25",
+    "hostname": "auth-server",
+    "status": "success"
+  },
+  {
+    "timestamp": "2026-08-19T08:25:00Z",
+    "event_type": "authentication_failed",
+    "username": "alice",
+    "source_ip": "198.51.100.25",
+    "hostname": "auth-server",
+    "status": "failed"
+  }
+]

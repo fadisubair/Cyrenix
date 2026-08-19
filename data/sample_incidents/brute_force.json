@@ -1,0 +1,40 @@
+{
+  "incident_id": "INC-002",
+  "title": "Brute Force Login Attempt",
+  "type": "brute_force",
+  "severity": "HIGH",
+  "status": "investigating",
+  "description": "Multiple failed authentication attempts were detected against the admin account from the same synthetic source IP address.",
+  "target_username": "admin",
+  "source_ip": "192.0.2.50",
+  "target_hostname": "auth-server",
+  "failed_attempts": 8,
+  "iocs": [
+    {
+      "type": "ip",
+      "value": "192.0.2.50"
+    },
+    {
+      "type": "username",
+      "value": "admin"
+    }
+  ],
+  "timeline": [
+    {
+      "timestamp": "2026-08-19T08:21:00Z",
+      "event": "First failed login attempt detected"
+    },
+    {
+      "timestamp": "2026-08-19T08:21:15Z",
+      "event": "Repeated failed login attempt detected"
+    },
+    {
+      "timestamp": "2026-08-19T08:22:00Z",
+      "event": "Multiple failed attempts triggered security alert"
+    },
+    {
+      "timestamp": "2026-08-19T08:25:00Z",
+      "event": "Incident moved to investigation"
+    }
+  ]
+}

@@ -1,28 +1,37 @@
+export interface TokenResponse {
+  access_token: string;
+  token_type: string;
+}
+
 export interface User {
-  id: string;
+  id: number;
   username: string;
-  email: string;
   role: 'ANALYST' | 'VIEWER';
   is_active: boolean;
+  created_at: string;
+}
+
+export interface LoginCredentials {
+  username: string;
+  password?: string;
 }
 
 export interface Incident {
-  id: string;
+  id: number;
   title: string;
   description: string;
-  category: string;
   severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
-  status: 'NEW' | 'OPEN' | 'IN_PROGRESS' | 'RESOLVED' | 'CLOSED';
-  confidence: number;
+  status: 'NEW' | 'IN_PROGRESS' | 'RESOLVED' | 'CLOSED';
+  category: string;
   risk_score: number;
+  confidence: number;
   created_at: string;
   updated_at: string;
-  first_seen: string;
-  last_seen: string;
 }
 
 export interface Event {
-  id: string;
+  id: number;
+  incident_id: number;
   timestamp: string;
   event_type: string;
   source: string;
@@ -30,80 +39,87 @@ export interface Event {
   username?: string;
   source_ip?: string;
   destination_ip?: string;
-  destination_port?: number;
   hostname?: string;
-  protocol?: string;
-  action?: string;
-  url?: string;
-  method?: string;
-  status_code?: number;
-  user_agent?: string;
-  process_name?: string;
-  file_name?: string;
-  status?: string;
-  raw_data?: Record<string, any>;
+  raw_data: Record<string, any>;
+  created_at: string;
 }
 
 export interface Finding {
-  id: string;
-  incident_id: string;
+  id: number;
+  incident_id: number;
   title: string;
   finding_type: string;
   description: string;
   rationale: string;
   confidence: number;
-  status: 'PROPOSED' | 'CONFIRMED' | 'REJECTED';
+  status: 'ACTIVE' | 'MITIGATED' | 'FALSE_POSITIVE';
   created_at: string;
   updated_at: string;
 }
 
-export interface InvestigationStep {
-  id: string;
-  finding_id: string;
+export interface FindingEvidence {
+  finding: Finding;
+  events: Event[];
+}
+
+export interface ReasoningStep {
+  id: number;
+  finding_id: number;
   step_order: number;
-  step_type: 'OBSERVATION' | 'CORRELATION' | 'ASSESSMENT';
+  step_type: 'OBSERVATION' | 'CORRELATION' | 'ASSESSMENT' | 'CONCLUSION';
   title: string;
   description: string;
-  conclusion: string;
-  confidence: number;
-  evidence_event_ids: string[];
+  conclusion?: string;
+  confidence?: number;
+  evidence_references: string[];
+  created_at: string;
 }
 
 export interface ResponseAction {
-  id: string;
-  finding_id: string;
+  id: number;
+  finding_id: number;
   action_type: string;
   target: string;
   title: string;
   description: string;
-  rationale: string;
-  risk_level: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  risk_level: 'LOW' | 'MEDIUM' | 'HIGH';
   confidence: number;
-  status: 'PENDING_APPROVAL' | 'APPROVED' | 'REJECTED' | 'EXECUTED';
-  approved_by_id?: string;
-  approved_at?: string;
-  execution_status?: 'PENDING' | 'SUCCESS' | 'FAILED';
-  execution_mode?: 'DRY_RUN' | 'LIVE';
-  execution_message?: string;
-  executed_at?: string;
+  status: 'PENDING_APPROVAL' | 'APPROVED' | 'REJECTED' | 'EXECUTING' | 'SUCCESS' | 'FAILED';
+  rationale: string;
+  approved_by?: string | null;
+  approved_at?: string | null;
+  rejected_at?: string | null;
+  execution_status: string;
+  execution_mode?: string | null;
+  execution_message?: string | null;
+  executed_at?: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ExecutionResult {
+  status: string;
+  mode: string;
+  message: string;
+  execution_timestamp: string;
 }
 
 export interface AuditLog {
-  id: string;
-  timestamp: string;
-  actor_id: string;
+  id: number;
   action: string;
-  target_type: string;
-  target_id: string;
+  actor: string;
   details: Record<string, any>;
+  response_action_id?: number;
+  finding_id?: number;
+  incident_id?: number;
+  created_at: string;
 }
 
 export interface TimelineEvent {
+  type: 'EVENT' | 'FINDING' | 'REASONING' | 'RESPONSE_ACTION' | 'AUDIT_LOG';
+  id: number;
   timestamp: string;
-  event_type: string;
   title: string;
   description: string;
-  source_type: string;
-  source_id: string;
-  data: Record<string, any>;
+  data: any;
 }

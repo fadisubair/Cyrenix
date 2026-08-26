@@ -1,142 +1,127 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Filter } from 'lucide-react';
-import { getIncidents } from '../api/incidents';
+import { incidentsApi } from '../api';
 import { Incident } from '../types';
-import { StatusBadge, SeverityBadge, ConfidenceBadge } from '../components/Badges';
-import { LoadingState, EmptyState } from '../components/EmptyState';
-import { format } from 'date-fns';
+import { Badge } from '../components/Badge';
+import { Search } from 'lucide-react';
 
-const IncidentList = () => {
+export const IncidentList: React.FC = () => {
   const [incidents, setIncidents] = useState<Incident[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const [statusFilter, setStatusFilter] = useState('');
-  const [severityFilter, setSeverityFilter] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchIncidents = async () => {
       try {
-        const data = await getIncidents();
+        const data = await incidentsApi.getAll();
         setIncidents(data);
       } catch (error) {
-        console.error("Error fetching incidents", error);
+        console.error('Failed to fetch incidents', error);
       } finally {
-        setLoading(false);
+        setIsLoading(false);
       }
     };
     fetchIncidents();
   }, []);
 
-  const filteredIncidents = incidents.filter(incident => {
-    const matchesSearch = incident.title.toLowerCase().includes(search.toLowerCase()) || String(incident.id).toLowerCase().includes(search.toLowerCase());
-    const matchesStatus = statusFilter ? incident.status === statusFilter : true;
-    const matchesSeverity = severityFilter ? incident.severity === severityFilter : true;
-    return matchesSearch && matchesStatus && matchesSeverity;
-  });
+  const getSeverityBadge = (severity: string) => {
+    switch (severity) {
+      case 'CRITICAL': return <Badge variant="danger">CRITICAL</Badge>;
+      case 'HIGH': return <Badge variant="warning">HIGH</Badge>;
+      case 'MEDIUM': return <Badge variant="info">MEDIUM</Badge>;
+      default: return <Badge>LOW</Badge>;
+    }
+  };
+
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case 'NEW': return <Badge variant="danger">NEW</Badge>;
+      case 'IN_PROGRESS': return <Badge variant="warning">IN PROGRESS</Badge>;
+      case 'RESOLVED': return <Badge variant="success">RESOLVED</Badge>;
+      case 'CLOSED': return <Badge>CLOSED</Badge>;
+      default: return <Badge>{status}</Badge>;
+    }
+  };
+
+  const filteredIncidents = incidents.filter(i => 
+    i.title.toLowerCase().includes(search.toLowerCase()) ||
+    i.id.toString().includes(search) ||
+    i.category.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+    <div className="space-y-6 flex flex-col h-full">
+      <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold text-slate-100">Incidents</h1>
-          <p className="text-slate-400 text-sm">Manage and investigate security incidents</p>
+          <h1 className="text-2xl font-bold text-white tracking-wide">Incidents</h1>
+          <p className="text-gray-400">Manage and investigate security incidents</p>
         </div>
       </div>
 
-      <div className="bg-slate-900 border border-slate-800 rounded-lg p-4 flex flex-col md:flex-row gap-4">
-        <div className="relative flex-1">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
-          <input
-            type="text"
-            placeholder="Search by ID or title..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full bg-slate-950 border border-slate-700 rounded-md pl-9 pr-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand"
-          />
-        </div>
-        
-        <div className="flex gap-4">
-          <div className="relative">
-            <select
-              value={severityFilter}
-              onChange={(e) => setSeverityFilter(e.target.value)}
-              className="appearance-none bg-slate-950 border border-slate-700 rounded-md pl-4 pr-10 py-2 text-sm text-slate-200 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand"
-            >
-              <option value="">All Severities</option>
-              <option value="CRITICAL">Critical</option>
-              <option value="HIGH">High</option>
-              <option value="MEDIUM">Medium</option>
-              <option value="LOW">Low</option>
-            </select>
-            <Filter size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none" />
-          </div>
-
-          <div className="relative">
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="appearance-none bg-slate-950 border border-slate-700 rounded-md pl-4 pr-10 py-2 text-sm text-slate-200 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand"
-            >
-              <option value="">All Statuses</option>
-              <option value="NEW">New</option>
-              <option value="OPEN">Open</option>
-              <option value="IN_PROGRESS">In Progress</option>
-              <option value="RESOLVED">Resolved</option>
-              <option value="CLOSED">Closed</option>
-            </select>
-            <Filter size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none" />
+      <div className="bg-panel border border-border rounded-lg flex-1 flex flex-col overflow-hidden">
+        <div className="p-4 border-b border-border flex items-center gap-4">
+          <div className="relative flex-1 max-w-md">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+            <input 
+              type="text" 
+              placeholder="Search incidents..." 
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full bg-background border border-border rounded-md pl-10 pr-4 py-2 text-sm text-white focus:outline-none focus:ring-1 focus:ring-primary"
+            />
           </div>
         </div>
-      </div>
 
-      <div className="panel overflow-hidden">
-        {loading ? (
-          <LoadingState message="Loading incidents..." />
-        ) : filteredIncidents.length === 0 ? (
-          <EmptyState message="No incidents found matching your criteria" />
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm text-left">
-              <thead className="text-xs text-slate-400 uppercase bg-slate-900 border-b border-slate-800">
+        <div className="flex-1 overflow-auto">
+          <table className="w-full text-left text-sm text-gray-300">
+            <thead className="text-xs text-gray-400 bg-background/50 uppercase sticky top-0 border-b border-border z-10">
+              <tr>
+                <th className="px-6 py-3 font-medium">ID</th>
+                <th className="px-6 py-3 font-medium">Title</th>
+                <th className="px-6 py-3 font-medium">Severity</th>
+                <th className="px-6 py-3 font-medium">Category</th>
+                <th className="px-6 py-3 font-medium">Status</th>
+                <th className="px-6 py-3 font-medium text-right">Risk Score</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border">
+              {isLoading ? (
                 <tr>
-                  <th className="px-4 py-3">ID</th>
-                  <th className="px-4 py-3">Severity</th>
-                  <th className="px-4 py-3">Title</th>
-                  <th className="px-4 py-3">Category</th>
-                  <th className="px-4 py-3">Status</th>
-                  <th className="px-4 py-3 text-right">Risk Score</th>
-                  <th className="px-4 py-3">Confidence</th>
-                  <th className="px-4 py-3 text-right">Created</th>
+                  <td colSpan={6} className="px-6 py-8 text-center text-gray-500">
+                    Loading incidents...
+                  </td>
                 </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-800">
-                {filteredIncidents.map((incident) => (
-                  <tr
-                    key={incident.id}
+              ) : filteredIncidents.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="px-6 py-8 text-center text-gray-500">
+                    No incidents found.
+                  </td>
+                </tr>
+              ) : (
+                filteredIncidents.map((incident) => (
+                  <tr 
+                    key={incident.id} 
+                    className="hover:bg-white/[0.02] cursor-pointer transition-colors"
                     onClick={() => navigate(`/incidents/${incident.id}`)}
-                    className="hover:bg-slate-800/50 cursor-pointer transition-colors"
                   >
-                    <td className="px-4 py-3 font-mono text-slate-400 text-xs">{String(incident.id).substring(0, 8)}</td>
-                    <td className="px-4 py-3"><SeverityBadge severity={incident.severity} /></td>
-                    <td className="px-4 py-3 font-medium text-slate-300 max-w-[250px] truncate">{incident.title}</td>
-                    <td className="px-4 py-3 text-slate-400">{incident.category}</td>
-                    <td className="px-4 py-3"><StatusBadge status={incident.status} /></td>
-                    <td className="px-4 py-3 text-right font-mono">{incident.risk_score}</td>
-                    <td className="px-4 py-3"><ConfidenceBadge confidence={incident.confidence} /></td>
-                    <td className="px-4 py-3 text-right text-slate-500 text-xs">
-                      {format(new Date(incident.created_at), 'MMM dd, yyyy HH:mm:ss')}
+                    <td className="px-6 py-4 font-mono">INC-{incident.id.toString().padStart(4, '0')}</td>
+                    <td className="px-6 py-4 font-medium text-white">{incident.title}</td>
+                    <td className="px-6 py-4">{getSeverityBadge(incident.severity)}</td>
+                    <td className="px-6 py-4">{incident.category}</td>
+                    <td className="px-6 py-4">{getStatusBadge(incident.status)}</td>
+                    <td className="px-6 py-4 text-right">
+                      <span className={`font-mono ${incident.risk_score > 70 ? 'text-red-400' : incident.risk_score > 40 ? 'text-amber-400' : 'text-emerald-400'}`}>
+                        {incident.risk_score.toFixed(1)}
+                      </span>
                     </td>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
 };
-
-export default IncidentList;

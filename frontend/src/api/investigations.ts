@@ -1,12 +1,13 @@
-import { apiClient } from './client';
-import { InvestigationStep, Finding } from '../types';
+import client from './client';
 
-export const getInvestigationReasoning = async (findingId: string): Promise<InvestigationStep[]> => {
-  const response = await apiClient.get(`/api/investigations/findings/${findingId}/reasoning`);
-  return response.data;
-};
+export const investigationsApi = {
+  analyze: async (incidentId: number | string): Promise<any> => {
+    const response = await client.post(`/api/investigations/${incidentId}/analyze`);
+    return response.data;
+  },
 
-export const analyzeIncident = async (incidentId: string): Promise<Finding> => {
-  const response = await apiClient.post(`/api/investigations/${incidentId}/analyze`);
-  return response.data;
+  getReasoning: async (findingId: number | string): Promise<any[]> => {
+    const response = await client.get(`/api/investigations/findings/${findingId}/reasoning`);
+    return response.data;
+  },
 };

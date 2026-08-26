@@ -1,56 +1,56 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { User } from '../types';
-import { getMe } from '../api/auth';
-import { apiClient } from '../api/client';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { User, LoginCredentials } from '../types';
+import { authApi } from '../api';
 
 interface AuthContextType {
   user: User | null;
-  token: string | null;
   isAuthenticated: boolean;
-  loading: boolean;
-  login: (token: string) => Promise<void>;
+  isLoading: boolean;
+  login: (credentials: LoginCredentials) => Promise<void>;
   logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const fetchUser = async () => {
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      const userData = await authApi.getCurrentUser();
+      setUser(userData);
+    } catch (error) {
+      console.error('Failed to fetch user', error);
+      localStorage.removeItem('access_token');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const initAuth = async () => {
-      if (token) {
-        try {
-          const userData = await getMe();
-          setUser(userData);
-        } catch (error) {
-          console.error("Failed to load user session", error);
-          logout();
-        }
-      }
-      setLoading(false);
-    };
-    initAuth();
-  }, [token]);
+    fetchUser();
+  }, []);
 
-  const login = async (newToken: string) => {
-    localStorage.setItem('token', newToken);
-    setToken(newToken);
-    const userData = await getMe();
-    setUser(userData);
+  const login = async (credentials: LoginCredentials) => {
+    const response = await authApi.login(credentials);
+    localStorage.setItem('access_token', response.access_token);
+    await fetchUser();
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
-    setToken(null);
+    localStorage.removeItem('access_token');
     setUser(null);
-    window.location.href = '/login';
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, isAuthenticated: !!user, loading, login, logout }}>
+    <AuthContext.Provider value={{ user, isAuthenticated: !!user, isLoading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

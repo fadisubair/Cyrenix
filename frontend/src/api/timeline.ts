@@ -1,7 +1,9 @@
-import { apiClient } from './client';
+import client from './client';
 import { TimelineEvent } from '../types';
 
-export const getIncidentTimeline = async (incidentId: string, params?: any): Promise<TimelineEvent[]> => {
-  const response = await apiClient.get(`/api/incidents/${incidentId}/timeline`, { params });
-  return response.data;
+export const timelineApi = {
+  getByIncident: async (incidentId: number | string): Promise<TimelineEvent[]> => {
+    const response = await client.get(`/api/incidents/${incidentId}/timeline`);
+    return response.data.timeline;
+  },
 };

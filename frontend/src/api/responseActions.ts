@@ -1,32 +1,31 @@
-import { apiClient } from './client';
-import { ResponseAction } from '../types';
+import client from './client';
+import { ResponseAction, ExecutionResult } from '../types';
 
-export const getResponseAction = async (id: string): Promise<ResponseAction> => {
-  const response = await apiClient.get(`/api/response-actions/${id}`);
-  return response.data;
-};
+export const responseActionsApi = {
+  getByFinding: async (findingId: number | string): Promise<ResponseAction[]> => {
+    const response = await client.get(`/api/response-actions/finding/${findingId}`);
+    return response.data;
+  },
 
-export const approveResponseAction = async (id: string): Promise<ResponseAction> => {
-  const response = await apiClient.patch(`/api/response-actions/${id}/approve`);
-  return response.data;
-};
+  recommend: async (findingId: number | string): Promise<ResponseAction> => {
+    const response = await client.post(`/api/response-actions/finding/${findingId}/recommend`);
+    return response.data;
+  },
 
-export const rejectResponseAction = async (id: string): Promise<ResponseAction> => {
-  const response = await apiClient.patch(`/api/response-actions/${id}/reject`);
-  return response.data;
-};
+  approve: async (actionId: number | string): Promise<ResponseAction> => {
+    const response = await client.patch(`/api/response-actions/${actionId}/approve`);
+    return response.data;
+  },
 
-export const executeResponseAction = async (id: string, mode: 'DRY_RUN' | 'LIVE' = 'DRY_RUN'): Promise<ResponseAction> => {
-  const response = await apiClient.post(`/api/response-actions/${id}/execute`, { mode });
-  return response.data;
-};
+  reject: async (actionId: number | string): Promise<ResponseAction> => {
+    const response = await client.patch(`/api/response-actions/${actionId}/reject`);
+    return response.data;
+  },
 
-export const getResponseActionsByFinding = async (findingId: string): Promise<ResponseAction[]> => {
-  const response = await apiClient.get(`/api/response-actions`, { params: { finding_id: findingId }});
-  return response.data;
-};
-
-export const recommendResponseAction = async (findingId: string): Promise<ResponseAction> => {
-  const response = await apiClient.post(`/api/response-actions/finding/${findingId}/recommend`);
-  return response.data;
+  execute: async (actionId: number | string, mode: string = 'DRY_RUN'): Promise<ExecutionResult> => {
+    const response = await client.post(`/api/response-actions/${actionId}/execute`, {
+      mode
+    });
+    return response.data;
+  },
 };

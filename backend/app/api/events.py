@@ -55,10 +55,24 @@ def create_event_endpoint(
     response_model=list[EventResponse],
 )
 def list_events(
+    event_type: str | None = None,
+    username: str | None = None,
+    source_ip: str | None = None,
+    hostname: str | None = None,
+    limit: int = 100,
+    offset: int = 0,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    return get_events(db)
+    return get_events(
+        db,
+        limit=limit,
+        offset=offset,
+        event_type=event_type,
+        username=username,
+        source_ip=source_ip,
+        hostname=hostname,
+    )
 
 
 @router.get(

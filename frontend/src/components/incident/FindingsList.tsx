@@ -22,6 +22,7 @@ export const FindingsList: React.FC<FindingsListProps> = ({ incidentId }) => {
     try {
       const data = await findingsApi.getByIncident(incidentId);
       setFindings(data);
+      return data;
     } catch (error) {
       console.error('Failed to fetch findings', error);
     } finally {
@@ -30,7 +31,11 @@ export const FindingsList: React.FC<FindingsListProps> = ({ incidentId }) => {
   };
 
   useEffect(() => {
-    fetchFindings();
+    fetchFindings().then(data => {
+      if (data && data.length > 0 && expandedId === null) {
+        toggleExpand(data[0].id);
+      }
+    });
   }, [incidentId]);
 
   const toggleExpand = async (findingId: number) => {

@@ -2,6 +2,11 @@ import client from './client';
 import { ResponseAction, ExecutionResult } from '../types';
 
 export const responseActionsApi = {
+  getAll: async (): Promise<ResponseAction[]> => {
+    const response = await client.get(`/api/response-actions`);
+    return response.data;
+  },
+
   getByFinding: async (findingId: number | string): Promise<ResponseAction[]> => {
     const response = await client.get(`/api/response-actions/finding/${findingId}`);
     return response.data;

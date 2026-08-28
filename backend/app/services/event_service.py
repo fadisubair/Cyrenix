@@ -29,11 +29,27 @@ def create_event(
     return event
 
 
-def get_events(db: Session) -> list[Event]:
+def get_events(
+    db: Session,
+    limit: int = 100,
+    offset: int = 0,
+    event_type: str | None = None,
+    username: str | None = None,
+    source_ip: str | None = None,
+    hostname: str | None = None,
+) -> list[Event]:
+    statement = select(Event)
 
-    statement = select(Event).order_by(
-        Event.timestamp.desc()
-    )
+    if event_type:
+        statement = statement.where(Event.event_type.ilike(f"%{event_type}%"))
+    if username:
+        statement = statement.where(Event.username.ilike(f"%{username}%"))
+    if source_ip:
+        statement = statement.where(Event.source_ip.ilike(f"%{source_ip}%"))
+    if hostname:
+        statement = statement.where(Event.hostname.ilike(f"%{hostname}%"))
+
+    statement = statement.order_by(Event.timestamp.desc()).limit(limit).offset(offset)
 
     return list(db.scalars(statement).all())
 

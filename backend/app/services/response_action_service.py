@@ -72,6 +72,13 @@ def get_finding_response_actions(
     )
 
 
+def get_all_response_actions(
+    db: Session,
+) -> list[ResponseAction]:
+    statement = select(ResponseAction).order_by(ResponseAction.created_at.desc())
+    return list(db.scalars(statement).all())
+
+
 def recommend_response_for_finding(
     db: Session,
     finding: Finding,

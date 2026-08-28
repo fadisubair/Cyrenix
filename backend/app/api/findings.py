@@ -12,6 +12,7 @@ from app.schemas.finding import (
     FindingResponse,
     FindingUpdate,
 )
+from app.schemas.investigation import InvestigationRecommendationResponse
 from app.services.finding_service import (
     create_finding,
     delete_finding,
@@ -22,6 +23,8 @@ from app.services.finding_service import (
     link_event_to_finding,
     update_finding,
 )
+from app.services.next_investigation_service import NextInvestigationService
+from app.services.mitre_service import MitreService
 
 
 router = APIRouter(
@@ -248,3 +251,82 @@ def get_finding_evidence(
         db,
         finding_id,
     )
+
+@router.get(
+    "/{finding_id}/confidence",
+)
+def get_finding_confidence(
+    finding_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    finding = get_finding(
+        db,
+        finding_id,
+    )
+
+    if finding is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Finding not found",
+        )
+
+    return {
+        "confidence": finding.confidence,
+        "supporting_evidence": finding.supporting_evidence or {},
+        "contradicting_evidence": finding.contradicting_evidence or {},
+    }
+
+@router.get(
+    "/{finding_id}/next-steps",
+    response_model=list[InvestigationRecommendationResponse],
+)
+def get_finding_next_steps(
+    finding_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    finding = get_finding(db, finding_id)
+    if finding is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Finding not found",
+        )
+    return NextInvestigationService.get_recommendations_for_finding(db, finding_id)
+
+@router.post(
+    "/{finding_id}/next-steps/generate",
+    response_model=list[InvestigationRecommendationResponse],
+)
+def generate_finding_next_steps(
+    finding_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_role("ANALYST", "ADMIN")),
+):
+    finding = get_finding(db, finding_id)
+    if finding is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Finding not found",
+        )
+    return NextInvestigationService.generate_recommendations(db, finding_id)
+
+
+@router.get(
+    "/{finding_id}/mitre",
+)
+def get_finding_mitre(
+    finding_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    finding = get_finding(db, finding_id)
+    if finding is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Finding not found",
+        )
+    return MitreService.get_mitre_mapping_for_finding(db, finding_id)
+
+
+

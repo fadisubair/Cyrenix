@@ -2,7 +2,7 @@
 
 ## Evidence-Driven SOC Incident Response Platform
 
-CYRENIX is a full-stack Security Operations Center (SOC) and incident-response platform designed to transform security telemetry into structured, explainable investigations and controlled response workflows.
+CYRENIX is a full-stack Security Operations Center (SOC) and incident-response platform designed to transform security telemetry into structured, explainable investigations and controlled response workflows. 
 
 ## 1. Project Highlights
 Wazuh provides the security telemetry and detection layer. CYRENIX provides the investigation, correlation, reasoning, risk, and response-governance layer built around that telemetry. *Note: CYRENIX is not a replacement for Wazuh.*

@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from pydantic import BaseModel, ConfigDict, Field
+from typing import Optional, List, Dict, Any
 
 
 class FindingCreate(BaseModel):
@@ -11,6 +12,9 @@ class FindingCreate(BaseModel):
     rationale: str = Field(min_length=3)
     confidence: float = Field(default=0.0, ge=0.0, le=1.0)
     status: str = "PROPOSED"
+    mitre_techniques: Optional[List[str]] = None
+    supporting_evidence: Optional[Dict[str, Any]] = None
+    contradicting_evidence: Optional[Dict[str, Any]] = None
 
 
 class FindingUpdate(BaseModel):
@@ -44,6 +48,9 @@ class FindingResponse(BaseModel):
     rationale: str
     confidence: float
     status: str
+    mitre_techniques: Optional[Any] = None
+    supporting_evidence: Optional[Any] = None
+    contradicting_evidence: Optional[Any] = None
     created_at: datetime
     updated_at: datetime
 

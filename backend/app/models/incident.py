@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 
-from sqlalchemy import DateTime, Float, Integer, String, Text
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import DateTime, Float, Integer, String, Text, ForeignKey, JSON
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.database import Base
 
@@ -53,6 +53,30 @@ class Incident(Base):
         default=0,
     )
 
+    asset_criticality: Mapped[str] = mapped_column(
+        String(20),
+        nullable=False,
+        default="MEDIUM",
+    )
+
+    identity_risk: Mapped[str] = mapped_column(
+        String(20),
+        nullable=False,
+        default="LOW",
+    )
+
+    priority: Mapped[str] = mapped_column(
+        String(20),
+        nullable=False,
+        default="LOW",
+    )
+
+    progression_level: Mapped[str] = mapped_column(
+        String(20),
+        nullable=False,
+        default="INITIAL",
+    )
+
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         nullable=False,
@@ -75,3 +99,16 @@ class Incident(Base):
         DateTime(timezone=True),
         nullable=True,
     )
+
+    owner_id: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id"),
+        nullable=True,
+    )
+
+    tags: Mapped[list[str] | None] = mapped_column(
+        JSON,
+        nullable=True,
+    )
+
+    # Relationships
+    owner = relationship("User", foreign_keys=[owner_id])

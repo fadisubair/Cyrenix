@@ -23,8 +23,11 @@ export interface Incident {
   severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
   status: 'NEW' | 'IN_PROGRESS' | 'RESOLVED' | 'CLOSED';
   category: string;
+  priority: string;
   risk_score: number;
   confidence: number;
+  owner_id?: number | null;
+  tags?: string[] | null;
   created_at: string;
   updated_at: string;
 }
@@ -52,7 +55,7 @@ export interface Finding {
   description: string;
   rationale: string;
   confidence: number;
-  status: 'ACTIVE' | 'MITIGATED' | 'FALSE_POSITIVE';
+  status: 'PROPOSED' | 'ACTIVE' | 'MITIGATED' | 'FALSE_POSITIVE' | 'REJECTED';
   created_at: string;
   updated_at: string;
 }
@@ -123,3 +126,49 @@ export interface TimelineEvent {
   description: string;
   data: any;
 }
+
+export interface AttackStage {
+  id: number;
+  name: string;
+  order: number;
+  mitre_tactic?: string;
+  mitre_technique?: string;
+  links?: any[];
+  created_at: string;
+}
+
+export interface AttackChain {
+  id: number;
+  incident_id: number;
+  name: string;
+  description?: string;
+  stages: AttackStage[];
+  created_at: string;
+  updated_at: string;
+}
+
+export interface IdentitySignal {
+  id: number;
+  signal_type: string;
+  severity: string;
+  confidence: number;
+  evidence?: any;
+  created_at: string;
+}
+
+export interface IdentityProfile {
+  id: number;
+  username: string;
+  risk_score: string;
+  signals: IdentitySignal[];
+  created_at: string;
+}
+
+export interface BlastRadius {
+  affected_users: string[];
+  affected_hosts: string[];
+  source_ips: string[];
+  destinations: string[];
+  relationships: Array<{source: string, target: string, type: string}>;
+}
+

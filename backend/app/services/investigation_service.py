@@ -7,6 +7,9 @@ from app.models.event import Event
 from app.models.finding import Finding
 from app.models.finding_evidence import finding_evidence
 from app.models.investigation_step import InvestigationStep
+from app.services.correlation_service import CorrelationService
+from app.services.mitre_service import MitreService
+from app.services.next_investigation_service import NextInvestigationService
 
 FAILED_LOGIN_TYPES = {
     "FAILED_LOGIN",
@@ -34,6 +37,13 @@ def analyze_incident(
     Returns a proposed Finding when a pattern is detected.
     Returns None when no supported pattern is detected.
     """
+    
+    # Clear existing proposed findings to prevent duplicates on multiple clicks
+    db.query(Finding).filter(
+        Finding.incident_id == incident_id,
+        Finding.status == "PROPOSED"
+    ).delete(synchronize_session=False)
+    db.commit()
 
     statement = (
         select(Event)
@@ -96,6 +106,47 @@ def analyze_incident(
                 break
 
     if not best_group:
+        # Fallback to AI Manager
+        from app.services.ai.manager import ai_manager
+        ai_result = ai_manager.analyze_incident(db, incident_id)
+        if ai_result:
+            finding = Finding(
+                incident_id=incident_id,
+                title=ai_result["title"],
+                finding_type=ai_result["finding_type"],
+                description=ai_result["description"],
+                rationale=ai_result["rationale"],
+                confidence=ai_result["confidence"],
+                mitre_techniques=ai_result.get("mitre_techniques"),
+                supporting_evidence=ai_result.get("supporting_evidence"),
+                contradicting_evidence=ai_result.get("contradicting_evidence"),
+                status="PROPOSED",
+            )
+            db.add(finding)
+            db.flush()
+            
+            # Simple assessment step for AI
+            assessment_step = InvestigationStep(
+                finding_id=finding.id,
+                step_order=1,
+                step_type="ASSESSMENT",
+                title="AI Model Assessment",
+                description="The AI model evaluated the incident.",
+                conclusion="AI model provided a finding based on patterns.",
+                confidence=ai_result["confidence"],
+                evidence_event_ids=[],
+            )
+            db.add(assessment_step)
+            db.commit()
+            db.refresh(finding)
+            
+            # Trigger expansion services
+            CorrelationService.correlate_events_for_incident(db, incident_id)
+            MitreService.get_mitre_mapping_for_finding(db, finding.id)
+            NextInvestigationService.generate_recommendations(db, finding.id)
+            
+            return finding
+            
         return None
 
     source_ip = best_group[0].source_ip
@@ -232,5 +283,10 @@ def analyze_incident(
 
     db.commit()
     db.refresh(finding)
+    
+    # Trigger expansion services
+    CorrelationService.correlate_events_for_incident(db, incident_id)
+    MitreService.get_mitre_mapping_for_finding(db, finding.id)
+    NextInvestigationService.generate_recommendations(db, finding.id)
 
     return finding

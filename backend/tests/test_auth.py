@@ -130,3 +130,42 @@ def test_invalid_login_returns_401(client):
     )
 
     assert response.status_code == 401
+
+
+def test_token_user(client):
+    client.post(
+        "/api/auth/register",
+        json={
+            "username": "pytest_token_user",
+            "email": "pytest_token_user@example.com",
+            "password": "TestPassword123!",
+            "role": "ANALYST",
+        },
+    )
+
+    response = client.post(
+        "/api/auth/token",
+        data={
+            "username": "pytest_token_user",
+            "password": "TestPassword123!",
+        },
+    )
+
+    assert response.status_code == 200
+
+    data = response.json()
+
+    assert "access_token" in data
+    assert data["token_type"] == "bearer"
+
+
+def test_invalid_token_returns_401(client):
+    response = client.post(
+        "/api/auth/token",
+        data={
+            "username": "non_existent_user",
+            "password": "WrongPassword123!",
+        },
+    )
+
+    assert response.status_code == 401

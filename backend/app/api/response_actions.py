@@ -13,10 +13,12 @@ from app.services.response_action_service import (
     approve_response_action,
     execute_response_action,
     get_finding_response_actions,
+    get_all_response_actions,
     get_response_action,
     recommend_response_for_finding,
     reject_response_action,
 )
+from app.services.policy_engine import PolicyEngineService
 
 
 router = APIRouter(
@@ -69,6 +71,16 @@ def recommend_response(
 # ---------------------------------------------------------
 # List actions for a finding
 # ---------------------------------------------------------
+
+@router.get(
+    "",
+    response_model=list[ResponseActionResponse],
+)
+def list_all_response_actions(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    return get_all_response_actions(db)
 
 @router.get(
     "/finding/{finding_id}",
@@ -230,6 +242,14 @@ def execute_response_action_endpoint(
             detail="Response action not found",
         )
 
+    # Policy Check
+    evaluation = PolicyEngineService.evaluate_action(db, action_id, current_user.username)
+    if evaluation.result == "BLOCKED":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=f"Action blocked by policy: {evaluation.reason}"
+        )
+
     try:
         return execute_response_action(
             db,
@@ -243,3 +263,29 @@ def execute_response_action_endpoint(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=str(exc),
         )
+
+@router.get(
+    "/{action_id}/policy",
+)
+def check_response_policy(
+    action_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    action = get_response_action(
+        db,
+        action_id,
+    )
+
+    if action is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Response action not found",
+        )
+
+    eval = PolicyEngineService.evaluate_action(db, action_id, current_user.username)
+    return {
+        "result": eval.result,
+        "reason": eval.reason
+    }
+

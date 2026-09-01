@@ -72,6 +72,13 @@ def get_finding_response_actions(
     )
 
 
+def get_all_response_actions(
+    db: Session,
+) -> list[ResponseAction]:
+    statement = select(ResponseAction).order_by(ResponseAction.created_at.desc())
+    return list(db.scalars(statement).all())
+
+
 def recommend_response_for_finding(
     db: Session,
     finding: Finding,
@@ -82,7 +89,7 @@ def recommend_response_for_finding(
     Currently supports BRUTE_FORCE findings.
     """
 
-    if finding.finding_type != "BRUTE_FORCE":
+    if finding.finding_type not in ("BRUTE_FORCE", "FAILED_LOGIN_SPIKE"):
         return None
 
     statement = (
@@ -100,6 +107,14 @@ def recommend_response_for_finding(
     evidence_events = list(
         db.scalars(statement).all()
     )
+
+    if not evidence_events:
+        fallback_stmt = (
+            select(Event)
+            .where(Event.incident_id == finding.incident_id)
+            .order_by(Event.timestamp.asc())
+        )
+        evidence_events = list(db.scalars(fallback_stmt).all())
 
     if not evidence_events:
         return None

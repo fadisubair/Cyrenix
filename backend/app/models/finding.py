@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 
-from sqlalchemy import DateTime, Float, ForeignKey, Integer, String, Text
+from sqlalchemy import DateTime, Float, ForeignKey, Integer, String, Text, JSON
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.core.database import Base
@@ -52,6 +52,21 @@ class Finding(Base):
         String(30),
         nullable=False,
         default="PROPOSED",
+    )
+
+    mitre_techniques: Mapped[list | dict | None] = mapped_column(
+        JSON,
+        nullable=True,
+    )
+
+    supporting_evidence: Mapped[list | dict | None] = mapped_column(
+        JSON,
+        nullable=True,
+    )
+
+    contradicting_evidence: Mapped[list | dict | None] = mapped_column(
+        JSON,
+        nullable=True,
     )
 
     created_at: Mapped[datetime] = mapped_column(

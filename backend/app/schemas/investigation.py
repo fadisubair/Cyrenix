@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from pydantic import BaseModel, ConfigDict
+from typing import Optional, Any, Dict
 
 
 class InvestigationStepResponse(BaseModel):
@@ -16,3 +17,21 @@ class InvestigationStepResponse(BaseModel):
     created_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
+
+class InvestigationRecommendationBase(BaseModel):
+    finding_id: int
+    priority: str = "MEDIUM"
+    title: str
+    description: str
+    reason: str
+    evidence_needed: Optional[Dict[str, Any]] = None
+    status: str = "PENDING"
+
+class InvestigationRecommendationCreate(InvestigationRecommendationBase):
+    pass
+
+class InvestigationRecommendationResponse(InvestigationRecommendationBase):
+    id: int
+    created_at: datetime
+    model_config = ConfigDict(from_attributes=True)
+

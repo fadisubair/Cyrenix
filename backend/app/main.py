@@ -8,6 +8,13 @@ from app.api.incidents import router as incident_router
 from app.api.investigations import router as investigation_router
 from app.api.response_actions import router as response_action_router
 from app.api.timeline import router as timeline_router
+from app.api.correlations import router as correlation_router
+from app.api.identity import router as identity_router
+from app.api.iocs import router as iocs_router
+from app.api.search import router as search_router
+from app.api.ingestion import router as ingestion_router
+from app.api.assets import router as assets_router
+from app.api.mitre import router as mitre_router
 
 
 app = FastAPI(
@@ -35,6 +42,13 @@ app.include_router(investigation_router)
 app.include_router(response_action_router)
 app.include_router(audit_log_router)
 app.include_router(timeline_router)
+app.include_router(correlation_router)
+app.include_router(identity_router)
+app.include_router(iocs_router)
+app.include_router(search_router)
+app.include_router(ingestion_router)
+app.include_router(assets_router)
+app.include_router(mitre_router)
 
 
 @app.get("/health")

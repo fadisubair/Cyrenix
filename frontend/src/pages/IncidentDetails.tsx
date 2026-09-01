@@ -9,6 +9,10 @@ import { EventsList } from '../components/incident/EventsList';
 import { FindingsList } from '../components/incident/FindingsList';
 import { ResponseActionsList } from '../components/incident/ResponseActionsList';
 import { TimelineView } from '../components/incident/TimelineView';
+import { AttackChainView } from '../components/incident/AttackChainView';
+import { IdentityRiskView } from '../components/incident/IdentityRiskView';
+import { BlastRadiusView } from '../components/incident/BlastRadiusView';
+import { NotesList } from '../components/incident/NotesList';
 import { Play } from 'lucide-react';
 
 export const IncidentDetails: React.FC = () => {
@@ -18,7 +22,7 @@ export const IncidentDetails: React.FC = () => {
   
   const [incident, setIncident] = useState<Incident | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'events' | 'findings' | 'response' | 'timeline'>('findings');
+  const [activeTab, setActiveTab] = useState<'findings' | 'events' | 'chain' | 'identity' | 'blast' | 'response' | 'notes' | 'timeline'>('findings');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analyzeError, setAnalyzeError] = useState<string | null>(null);
 
@@ -63,8 +67,12 @@ export const IncidentDetails: React.FC = () => {
 
   const tabs = [
     { id: 'findings', label: 'Findings & Reasoning' },
+    { id: 'chain', label: 'Attack Chain' },
+    { id: 'identity', label: 'Identity Risk' },
+    { id: 'blast', label: 'Blast Radius' },
     { id: 'events', label: 'Events & Evidence' },
     { id: 'response', label: 'Response Actions' },
+    { id: 'notes', label: 'Analyst Notes' },
     { id: 'timeline', label: 'Audit Timeline' },
   ];
 
@@ -119,9 +127,13 @@ export const IncidentDetails: React.FC = () => {
         </div>
         
         <div className="flex-1 overflow-hidden">
-          {activeTab === 'events' && <EventsList incidentId={incident.id} />}
           {activeTab === 'findings' && <FindingsList incidentId={incident.id} />}
+          {activeTab === 'chain' && <AttackChainView incidentId={incident.id} />}
+          {activeTab === 'identity' && <IdentityRiskView incidentId={incident.id} />}
+          {activeTab === 'blast' && <BlastRadiusView incidentId={incident.id} />}
+          {activeTab === 'events' && <EventsList incidentId={incident.id} />}
           {activeTab === 'response' && <ResponseActionsList incidentId={incident.id} />}
+          {activeTab === 'notes' && <NotesList incidentId={incident.id} />}
           {activeTab === 'timeline' && <TimelineView incidentId={incident.id} />}
         </div>
       </div>

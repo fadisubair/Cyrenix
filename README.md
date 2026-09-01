@@ -2,85 +2,60 @@
 
 ## Evidence-Driven SOC Incident Response Platform
 
-CYRENIX is a full-stack SOC and incident-response platform designed to transform security telemetry into structured, explainable investigations and controlled response workflows. Integrating with Wazuh for real security telemetry, it provides an advanced investigation layer.
+CYRENIX is a full-stack Security Operations Center (SOC) and incident-response platform designed to transform security telemetry into structured, explainable investigations and controlled response workflows.
 
-> **Note**: IP addresses shown in the documentation are placeholders from an isolated development lab.
+## 1. Project Highlights
+Wazuh provides the security telemetry and detection layer. CYRENIX provides the investigation, correlation, reasoning, risk, and response-governance layer built around that telemetry. *Note: CYRENIX is not a replacement for Wazuh.*
 
-## Project Context
-
-**Evidence-Driven SOC Incident Response Platform**
-
-Wazuh is used for telemetry collection and detection, while CYRENIX serves as the investigation, correlation, reasoning, risk, and controlled-response layer built around that telemetry.
-
-The system integrates with Wazuh for real security telemetry and provides an investigation layer covering:
-- Event normalization
-- Incident management
-- Event-to-incident association
-- Security-event correlation
-- Attack-chain analysis
-- Identity risk analysis
-- Behavioral baseline/anomaly analysis
-- Explainable findings
-- Evidence linking
-- MITRE ATT&CK mapping
-- Blast-radius analysis
-- Next investigation recommendations
-- Threat intelligence
-- Response-policy evaluation
-- Analyst approval workflows
-- DRY_RUN response execution
-- Audit logging
-- Global search
-- Analyst notes
-- Settings/configuration
-
-*Disclaimer: CYRENIX is not a replacement for Wazuh, and currently validates Wazuh alerts through the authenticated CYRENIX ingestion API rather than automatic production-scale Wazuh streaming.*
-
-## Real-World Lab
-
-The CYRENIX lab consists of a host testing environment:
-
+## 2. Architecture
 ```text
-Fedora Host
-│
-├── Kali Linux
-│   └── <KALI_IP>
-│       ATTACKER
-│
-├── Ubuntu Server
-│   └── <UBUNTU_TARGET_IP>
-│       TARGET
-│       SSH
-│       Wazuh Agent
-│
-└── Ubuntu Server
-    └── <WAZUH_SERVER_IP>
-        WAZUH SERVER
-        ├── Wazuh Manager
-        ├── Wazuh Indexer
-        └── Wazuh Dashboard
+Kali Linux
+    ↓
+Ubuntu Target + Wazuh Agent
+    ↓
+Wazuh Server
+    ↓
+CYRENIX Ingestion
+    ↓
+FastAPI Backend
+    ↓
+PostgreSQL
+    ↓
+Investigation / Correlation
+    ↓
+Response Governance
+    ↓
+Audit
 ```
+- **Kali Linux**: The attack source.
+- **Ubuntu Target + Wazuh Agent**: The monitored host experiencing the attack and streaming logs.
+- **Wazuh Server**: Detects and aggregates the telemetry.
+- **CYRENIX Ingestion**: Validates and normalizes the incoming data.
+- **FastAPI Backend & PostgreSQL**: Powers the core platform API and state.
+- **Investigation & Governance**: Orchestrates reasoning, risk profiling, and controlled responses.
 
-## Real Telemetry Validation
+## 3. Wazuh + CYRENIX Responsibilities
+- **Wazuh**: Host monitoring, log collection, intrusion detection, and initial telemetry alerting.
+- **CYRENIX**: Incident management, finding rationale, event correlation, attack-chain visualization, identity risk assessment, and analyst-controlled response actions.
 
-The real-world validation currently uses the authenticated ingestion API as the integration boundary. 
-
+## 4. Real-World Wazuh Validation
+The validated workflow in the laboratory:
 ```text
 Kali
   ↓
-controlled SSH authentication failure
+Controlled SSH authentication failure
   ↓
 Ubuntu target
   ↓
-authentication logs
+Authentication logs
   ↓
 Wazuh Agent
   ↓
 Wazuh Manager
   ↓
-Wazuh detection
+Wazuh alert
   ↓
-CYRENIX ingestion API
+CYRENIX authenticated ingestion API
   ↓
 WazuhNormalizer
   ↓
@@ -88,31 +63,28 @@ FAILED_LOGIN
   ↓
 PostgreSQL
   ↓
-Incident
-  ↓
-Investigation
-  ↓
-Finding
-  ↓
-Response recommendation
-  ↓
-Approval
-  ↓
-DRY_RUN
-  ↓
-Audit
+Incident investigation
 ```
+*Note: The current real-lab integration uses the authenticated CYRENIX ingestion API as the integration boundary. Automatic production-scale Wazuh webhook/event-stream ingestion is a future roadmap item.*
 
-## Wazuh Normalization
+## 5. Detection and Correlation
+CYRENIX implements deterministic MVP heuristics for detecting brute-force attacks:
+- 3 or more `FAILED_LOGIN` events
+- same source IP
+- same username
+- within a 10-minute window
 
-The `WazuhNormalizer` converts raw Wazuh alerts into normalized CYRENIX event types. 
+Result: **brute-force-oriented finding**. This represents deterministic correlation rather than purely AI-driven detection.
 
-Examples:
-- SSH/PAM authentication failure → `FAILED_LOGIN`
-- successful SSH authentication → `SUCCESSFUL_LOGIN`
-- unsupported events → `WAZUH_ALERT`
+## 6. Event Normalization
+Raw Wazuh events are processed by the `WazuhNormalizer` into `NormalizedEvent` entities, and finally stored as database events.
 
-Normalized fields include:
+**Supported Mappings**:
+- Authentication failure → `FAILED_LOGIN`
+- Successful authentication → `SUCCESSFUL_LOGIN`
+- Other Wazuh alert → `WAZUH_ALERT`
+
+**Normalized Fields**:
 - `timestamp`
 - `event_type`
 - `source`
@@ -122,201 +94,197 @@ Normalized fields include:
 - `hostname`
 - `raw_data`
 
-## Brute-Force Detection
-
-The current investigation logic relies on deterministic MVP heuristics. For example, brute-force detection logic detects:
-- at least 3 failed-login events
-- same source IP
-- same username
-- within a 10-minute window
-
-Example:
+## 7. Incident Investigation Workflow
 ```text
-<KALI_IP> → labuser → FAILED_LOGIN
-<KALI_IP> → labuser → FAILED_LOGIN
-<KALI_IP> → labuser → FAILED_LOGIN
-```
-Result: **Possible Brute-Force Attack**
-
-## Investigation Workflow
-
-High-impact response actions are not supposed to execute automatically just because a finding exists.
-
-```text
-Observation
-↓
-Correlation
-↓
-Assessment
-↓
-Evidence
-↓
+Incident
+ ↓
+Events & Evidence
+ ↓
 Finding
-↓
+ ↓
+Reasoning
+ ↓
+Attack Chain
+ ↓
 MITRE ATT&CK
-↓
+ ↓
 Identity Risk
-↓
-Next Investigation Steps
-↓
+ ↓
+Blast Radius
+ ↓
+Investigation Recommendations
+ ↓
 Response Recommendation
-↓
+```
+
+## 8. Findings & Reasoning
+Findings represent structured analytical results based on real events. Fields include:
+- `title`
+- `finding_type`
+- `severity`
+- `confidence`
+- `description`
+- `rationale`
+- `investigation_reasoning`
+
+## 9. Events & Evidence
+The platform tracks and associates security events directly with incidents, allowing analysts to review the underlying telemetry evidence separate from the high-level finding cards.
+
+## 10. Attack Chain
+CYRENIX visualizes the progression of related events mapped to attack stages across the incident lifecycle.
+
+## 11. MITRE ATT&CK
+Findings can be mapped to the MITRE ATT&CK framework. For example, the SSH authentication scenario maps to:
+- `T1110` (Brute Force)
+- `T1110.001` (Password Guessing)
+
+## 12. Identity Risk
+Identity risk provides context on users involved in an incident. It analyzes:
+- Identity signals
+- Identity profiles
+- Relevant authentication activity
+
+## 13. Blast Radius
+Evaluates the potential scope of compromise:
+```text
+Incident
+ ├── User
+ │    └── labuser
+ │
+ └── Source
+      └── <KALI_IP>
+```
+
+## 14. Investigation Recommendations
+Suggests deterministic next steps for analysts based on the current state of findings (e.g., looking for a successful login following brute-force attempts).
+
+## 15. Response Workflow
+```text
+Finding
+ ↓
+Response Recommendation
+ ↓
 Policy Evaluation
-↓
+ ↓
 Analyst Approval
-↓
+ ↓
 DRY_RUN
-↓
+ ↓
 Audit Trail
 ```
+*Note: Response recommendations are not automatically executed. High-impact containment requires manual validation.*
 
-## Features
+## 16. Response Actions
+Includes actions such as proposing block rules for attacking IPs based on findings.
+## 17. Analyst Approval
+Provides a governance checkpoint where analysts must explicitly approve or reject high-impact response actions.
 
-1. **Incident Management**: End-to-end tracking of security incidents.
-2. **Real Wazuh Integration**: Telemetry collection through authenticated ingestion APIs.
-3. **Event Normalization**: `WazuhNormalizer` to handle raw Wazuh alerts.
-4. **Event-to-Incident Association**: Grouping related security events.
-5. **Brute-Force Detection**: Deterministic correlation rules.
-6. **Explainable Findings**: Human-readable explanations of security alerts.
-7. **Investigation Evidence**: Linking concrete evidence to findings.
-8. **Attack Chain Correlation**: Visualizing the progression of an attack.
-9. **Identity Risk**: Profiling identities involved in incidents.
-10. **Behavioral Baseline**: Identifying anomalies from normal behavior.
-11. **MITRE ATT&CK**: Mapping findings to the ATT&CK framework.
-12. **Blast Radius**: Evaluating the potential scope of an incident.
-13. **Threat Intelligence**: Integrating local threat insights.
-14. **Next Investigation Steps**: Recommending analyst actions.
-15. **Response Center**: Unified response management.
-16. **Response Policy Engine**: Evaluating organizational response rules.
-17. **Analyst Approval**: Manual checkpoints for high-impact actions.
-18. **DRY_RUN**: Simulating response executions.
-19. **Audit Trail**: Tracking system and analyst changes.
-20. **Global Search**: System-wide querying capabilities.
-21. **Analyst Notes**: Collaborative investigation documentation.
-22. **Settings**: Platform configuration.
+## 18. DRY_RUN
+Allows analysts to simulate response actions (like blocking an IP) before affecting the real environment.
 
-## Tech Stack
+## 19. Audit Trail
+Comprehensive logging tracks all analyst actions, approvals, and system evaluations to ensure accountability.
 
-**Frontend:**
-- React
-- TypeScript
-- Vite
+## 20. Threat Intelligence
+Allows searching and associating known indicators of compromise (IoCs) and threat insights with findings.
 
-**Backend:**
-- Python
-- FastAPI
-- SQLAlchemy
-- Pydantic
-- JWT authentication
+## 21. Authentication and Authorization
+CYRENIX enforces role-based access control (RBAC) via JWT authentication.
+Roles include: `ADMIN`, `ANALYST`, and `VIEWER`.
 
-**Database:**
-- PostgreSQL
-- Alembic
+## 22. API
+CYRENIX exposes RESTful FastAPI routes. Representative endpoints include:
+- `POST /api/auth/login`
+- `POST /api/auth/token`
+- `GET /api/incidents`
+- `POST /api/incidents`
+- `GET /api/incidents/{id}/risk`
+- `GET /api/incidents/{id}/blast-radius`
+- `GET /api/incidents/{id}/attack-chain`
+- `GET /api/incidents/{id}/identity-risk`
+- `POST /api/ingestion/events`
+- `GET /api/events`
+- `POST /api/events`
+- `GET /api/events/{event_id}`
+- `PATCH /api/events/{event_id}/incident/{incident_id}`
 
-**Security:**
-- Wazuh
-- Kali Linux
-- Ubuntu Server
-- SSH telemetry
-- MITRE ATT&CK
+*(Local Swagger documentation available at `http://127.0.0.1:8000/docs`)*
 
-## Authentication & Authorization
+## 23. Technology Stack
+**Frontend**: React, TypeScript, Vite
+**Backend**: Python, FastAPI, SQLAlchemy, Pydantic, JWT authentication
+**Database**: PostgreSQL, Alembic
+**Security**: Wazuh, Linux, SSH telemetry, MITRE ATT&CK
 
-CYRENIX implements JWT authentication with an OAuth2-compatible token flow.
-
-**Roles:**
-- `ADMIN`
-- `ANALYST`
-- `VIEWER`
-
-Protected modification endpoints require appropriate authorization via JWT Bearer tokens.
-
-## API
-
-The backend exposes several major endpoints for telemetry, investigation, and configuration:
-
-```http
-POST /api/auth/login
-POST /api/auth/token
-
-GET /api/incidents
-POST /api/incidents
-
-GET /api/incidents/{id}/risk
-GET /api/incidents/{id}/blast-radius
-
-POST /api/ingestion/events
-
-PATCH /api/events/{event_id}/incident/{incident_id}
-```
-
-*For local Swagger documentation, visit: `http://127.0.0.1:8000/docs` (when running locally).*
-
-## Installation
-
-1. **Clone repository**:
-   ```bash
-   git clone <repository_url>
-   cd Cyrenix
-   ```
-2. **Backend virtual environment**:
-   ```bash
-   cd backend
-   python -m venv venv
-   source venv/bin/activate
-   ```
-3. **Install backend dependencies**:
-   ```bash
-   pip install -r requirements.txt
-   ```
-4. **Configure environment variables**:
-   Create a `.env` file in the `backend/` directory:
-   ```env
-   DATABASE_URL=<YOUR_DATABASE_URL>
-   JWT_SECRET_KEY=<YOUR_SECRET>
-   ```
-5. **PostgreSQL setup**:
-   Ensure PostgreSQL is running and the CYRENIX database is created.
-6. **Run Alembic migrations**:
-   ```bash
-   alembic upgrade head
-   ```
-7. **Start FastAPI backend**:
-   ```bash
-   uvicorn app.main:app --reload
-   ```
-8. **Start React/Vite frontend**:
-   ```bash
-   cd ../frontend
-   npm install
-   npm run dev
-   ```
-9. **Open Swagger**: Navigate to `http://127.0.0.1:8000/docs`
-10. **Run tests**:
-    ```bash
-    cd ../backend
-    python -m pytest -q
-    ```
-
-## Wazuh Lab Setup
-
-The logical architecture consists of three nodes:
-
+## 24. Project Structure
 ```text
-Kali
-  ↓
-Ubuntu Target + Wazuh Agent
-  ↓
-Wazuh Server
-  ↓
-CYRENIX
+CYRENIX/
+├── backend/
+│   ├── alembic/
+│   ├── app/
+│   │   ├── api/
+│   │   ├── core/
+│   │   ├── models/
+│   │   ├── schemas/
+│   │   └── services/
+│   │       └── ingestion/
+│   └── tests/
+├── frontend/
+│   ├── public/
+│   └── src/
+│       ├── api/
+│       ├── components/
+│       ├── contexts/
+│       └── pages/
+└── README.md
 ```
-The Ubuntu target monitors authentication telemetry, and the Wazuh server processes the resulting events, which are then shipped to CYRENIX.
 
-## Real Demonstration
+## 25. Installation
+To get started:
+```bash
+git clone <repository_url>
+cd Cyrenix
+```
 
-Please note that security testing must only be performed against systems the user owns or is authorized to test.
+## 26. Backend Setup
+```bash
+cd backend
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
+Set up the `.env` file (never use real credentials in public files):
+```env
+DATABASE_URL=<YOUR_DATABASE_URL>
+JWT_SECRET_KEY=<YOUR_SECRET>
+```
 
+## 27. Frontend Setup
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+## 28. Database Setup
+Create your PostgreSQL database matching your `DATABASE_URL`. Run migrations:
+```bash
+cd backend
+alembic upgrade head
+```
+
+## 29. Wazuh Setup
+Logical Wazuh architecture:
+```text
+Kali (<KALI_IP>)
+  ↓
+Ubuntu target + Wazuh Agent (<UBUNTU_TARGET_IP>)
+  ↓
+Wazuh Server (<WAZUH_SERVER_IP>)
+```
+The Wazuh Agent monitors `/var/log/auth.log` and forwards events to the Wazuh Server.
+
+## 30. Real-World Demonstration
 1. Generate a controlled authentication failure against the lab target.
 2. Verify the event appears in Ubuntu authentication logs.
 3. Verify the Wazuh Agent is connected.
@@ -331,70 +299,52 @@ Please note that security testing must only be performed against systems the use
 12. Use DRY_RUN.
 13. Review Audit Trail.
 
-## Testing
-
-Latest verified validation results:
-
-- **Backend**: 35 passed.
+## 31. Testing
+Latest verification results:
+- **Backend Tests**: 35 passed.
 - **Alembic**: No new upgrade operations detected.
-- **Frontend**: Production build successful. 0 TypeScript compilation errors during the validated build.
+- **Frontend Build**: Production build successful (0 TypeScript compilation errors).
 
-## Current Limitations
+## 32. Security Considerations
+- Test only against systems you own and are authorized to assess.
+- Ensure JWT keys and database passwords are long, random, and kept secret.
 
-- Wazuh ingestion is currently demonstrated through the authenticated CYRENIX ingestion API.
-- Production-scale automated Wazuh streaming/webhook ingestion is not yet implemented.
-- Some AI functionality uses an abstraction/fallback provider rather than a production LLM deployment.
-- Detection logic includes deterministic MVP heuristics.
-- There are currently 5 non-fatal Pydantic V2 deprecation warnings involving class-based configuration.
-- Current deployment is intended for development and controlled security laboratory use.
+## 33. Current Limitations
+- Ingestion operates via an authenticated API endpoint.
+- Production-scale automatic Wazuh webhook/event-stream ingestion is not implemented.
+- Five non-fatal Pydantic V2 deprecation warnings exist (class-based configuration).
+- Detection logic currently relies on MVP deterministic rules.
 
-## Future Roadmap
+## 34. Future Roadmap
+- Native Wazuh webhook/event-stream integration
+- Advanced Behavioral Analytics
+- Redis/Kafka Event Processing
+- Containerized/Kubernetes Deployment
+- SOAR connector framework
 
-- [ ] Native Wazuh webhook/event-stream integration
-- [ ] Message-queue based ingestion
-- [ ] Redis/Kafka event processing
-- [ ] Advanced behavioral analytics
-- [ ] Production LLM integration
-- [ ] Additional SIEM/EDR integrations
-- [ ] SOAR connector framework
-- [ ] Containerized deployment
-- [ ] Kubernetes deployment
-- [ ] Improved observability
-- [ ] More granular response policies
+## 35. Validation Summary
+The workflow successfully demonstrates pulling telemetry from a real lab and traversing the entire incident lifecycle up to a controlled dry-run response.
 
-## Screenshots
+## 36. Portfolio Description
+CYRENIX is a full-stack SOC investigation platform integrating Wazuh telemetry with FastAPI, React, TypeScript, and PostgreSQL. It emphasizes explainable findings, MITRE ATT&CK mapping, response governance, and auditability.
 
-Screenshots of the UI can be found in `docs/screenshots/`.
-*Note: Public screenshots must be sanitized to remove credentials, tokens, internal addresses, and other environment-specific information.*
+## 37. Key Security Workflow
+Observation → Investigation → Assessment → Governance → Simulated Execution.
 
-Suggested filenames:
-- `wazuh-alert.png`
-- `incident-overview.png`
-- `finding-analysis.png`
-- `attack-chain.png`
-- `identity-risk.png`
-- `mitre-mapping.png`
-- `blast-radius.png`
-- `investigation-steps.png`
-- `response-recommendation.png`
-- `approval-workflow.png`
-- `audit-trail.png`
+## 38. Screenshots
+![Wazuh Dashboard](docs/screenshots/01-wazuh-dashboard.png)
+![CYRENIX Findings and Reasoning](docs/screenshots/02-findings-reasoning.png)
+![CYRENIX Events and Evidence](docs/screenshots/03-events-evidence.png)
+![CYRENIX MITRE ATT&CK](docs/screenshots/04-mitre-attack.png)
+![CYRENIX Response Actions and DRY_RUN](docs/screenshots/05-response-dry-run.png)
 
-## Project Structure
+*(Note: Screenshot files are pending addition to the repository.)*
 
-```text
-CYRENIX/
-├── backend/
-│   ├── app/
-│   │   ├── api/
-│   │   ├── models/
-│   │   ├── schemas/
-│   │   └── services/
-│   │       └── ingestion/
-│   └── tests/
-└── frontend/
-    └── src/
-        ├── api/
-        ├── components/
-        └── pages/
-```
+## 39. Repository
+Ensure you do not commit environment files or actual lab IPs to this repository.
+
+## 40. Author
+[Your Name / Alias]
+
+## 41. Disclaimer
+This project is intended for educational purposes and controlled laboratory environments only.

@@ -331,20 +331,11 @@ CYRENIX is a full-stack SOC investigation platform integrating Wazuh telemetry w
 ## 37. Key Security Workflow
 Observation → Investigation → Assessment → Governance → Simulated Execution.
 
-## 38. Screenshots
-![Wazuh Dashboard](docs/screenshots/01-wazuh-dashboard.png)
-![CYRENIX Findings and Reasoning](docs/screenshots/02-findings-reasoning.png)
-![CYRENIX Events and Evidence](docs/screenshots/03-events-evidence.png)
-![CYRENIX MITRE ATT&CK](docs/screenshots/04-mitre-attack.png)
-![CYRENIX Response Actions and DRY_RUN](docs/screenshots/05-response-dry-run.png)
+## 38. Repository
+https://github.com/fadisubair/Cyrenix.git
 
-*(Note: Screenshot files are pending addition to the repository.)*
+## 39. Author
+Fadi Subair
 
-## 39. Repository
-Ensure you do not commit environment files or actual lab IPs to this repository.
-
-## 40. Author
-[Your Name / Alias]
-
-## 41. Disclaimer
+## 40. Disclaimer
 This project is intended for educational purposes and controlled laboratory environments only.

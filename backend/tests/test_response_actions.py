@@ -79,6 +79,63 @@ def create_bruteforce_finding(client, token):
 
     return analysis_response.json()["id"]
 
+def create_failed_login_spike_finding(client, token):
+    headers = {
+        "Authorization": f"Bearer {token}",
+    }
+
+    # Create incident
+    incident_response = client.post(
+        "/api/incidents",
+        headers=headers,
+        json={
+            "title": "Pytest Response Test Spike",
+            "description": "Response action integration test for spike",
+            "category": "AUTHENTICATION",
+            "severity": "HIGH",
+        },
+    )
+
+    assert incident_response.status_code == 201
+
+    incident_id = incident_response.json()["id"]
+
+    # Create three failed-login events from different IPs so they don't form a group but pass MIN_FAILED_LOGINS=3 check
+    events_data = [
+        {"timestamp": "2026-08-18T16:00:00+05:30", "ip": "10.50.60.71"},
+        {"timestamp": "2026-08-18T16:02:00+05:30", "ip": "10.50.60.72"},
+        {"timestamp": "2026-08-18T16:04:00+05:30", "ip": "10.50.60.73"},
+    ]
+
+    for event_data in events_data:
+        response = client.post(
+            "/api/events",
+            headers=headers,
+            json={
+                "incident_id": incident_id,
+                "timestamp": event_data["timestamp"],
+                "event_type": "FAILED_LOGIN",
+                "source": "pytest",
+                "username": "admin",
+                "source_ip": event_data["ip"],
+                "destination_ip": "10.50.60.10",
+                "hostname": "PYTEST-DC",
+                "raw_data": "Failed login attempt.",
+            },
+        )
+
+        assert response.status_code == 201
+
+    # Analyze
+    analysis_response = client.post(
+        f"/api/investigations/{incident_id}/analyze",
+        headers=headers,
+    )
+
+    assert analysis_response.status_code == 201
+
+    return analysis_response.json()["id"]
+
 
 def test_response_action_lifecycle(client):
     token = register_and_login(client)
@@ -380,3 +437,28 @@ def test_missing_response_action_returns_404(client):
         response.json()["detail"]
         == "Response action not found"
     )
+
+def test_response_action_recommend_failed_login_spike(client):
+    token = register_and_login(client)
+
+    headers = {
+        "Authorization": f"Bearer {token}",
+    }
+
+    finding_id = create_failed_login_spike_finding(
+        client,
+        token,
+    )
+
+    recommendation_response = client.post(
+        f"/api/response-actions/finding/{finding_id}/recommend",
+        headers=headers,
+    )
+
+    assert recommendation_response.status_code == 201
+
+    action = recommendation_response.json()
+
+    assert action["action_type"] == "BLOCK_SOURCE_IP"
+    assert action["target"] == "10.50.60.71"
+    assert action["status"] == "PENDING_APPROVAL"

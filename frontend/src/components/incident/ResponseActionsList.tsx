@@ -16,12 +16,13 @@ export const ResponseActionsList: React.FC<ResponseActionsListProps> = ({ incide
   const [actions, setActions] = useState<Record<number, ResponseAction[]>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState<Record<number, string>>({});
+  const [actionError, setActionError] = useState<Record<number, string>>({});
 
   const fetchData = async () => {
     try {
       const findingData = await findingsApi.getByIncident(incidentId);
       setFindings(findingData);
-      
+
       const actionsData: Record<number, ResponseAction[]> = {};
       for (const finding of findingData) {
         actionsData[finding.id] = await responseActionsApi.getByFinding(finding.id);
@@ -40,14 +41,17 @@ export const ResponseActionsList: React.FC<ResponseActionsListProps> = ({ incide
 
   const handleRecommend = async (findingId: number) => {
     setActionLoading(prev => ({ ...prev, [findingId]: 'recommend' }));
+    setActionError(prev => ({ ...prev, [findingId]: '' }));
     try {
       const action = await responseActionsApi.recommend(findingId);
       setActions(prev => ({
         ...prev,
         [findingId]: [...(prev[findingId] || []), action]
       }));
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to recommend action', error);
+      const errorMessage = error.response?.data?.detail || error.message || 'Failed to recommend action';
+      setActionError(prev => ({ ...prev, [findingId]: errorMessage }));
     } finally {
       setActionLoading(prev => ({ ...prev, [findingId]: '' }));
     }
@@ -124,15 +128,22 @@ export const ResponseActionsList: React.FC<ResponseActionsListProps> = ({ incide
                 <p className="text-sm text-gray-400">{finding.description}</p>
               </div>
               {user?.role === 'ANALYST' && findingActions.length === 0 && (
-                <Button 
-                  size="sm" 
-                  onClick={() => handleRecommend(finding.id)}
-                  isLoading={actionLoading[finding.id] === 'recommend'}
-                  className="flex gap-2"
-                >
-                  <Shield className="h-4 w-4" />
-                  Recommend Action
-                </Button>
+                <div className="flex flex-col items-end gap-2">
+                  <Button
+                    size="sm"
+                    onClick={() => handleRecommend(finding.id)}
+                    isLoading={actionLoading[finding.id] === 'recommend'}
+                    className="flex gap-2"
+                  >
+                    <Shield className="h-4 w-4" />
+                    Recommend Action
+                  </Button>
+                  {actionError[finding.id] && (
+                    <div className="text-sm text-red-400 bg-red-950/50 px-3 py-1 rounded border border-red-900 mt-2">
+                      {actionError[finding.id]}
+                    </div>
+                  )}
+                </div>
               )}
             </div>
 
@@ -150,10 +161,10 @@ export const ResponseActionsList: React.FC<ResponseActionsListProps> = ({ incide
                         <p className="text-sm text-gray-300">Target: <span className="font-mono text-cyan-400">{action.target}</span></p>
                       </div>
                     </div>
-                    
+
                     <p className="text-sm text-gray-400 mb-4">{action.description}</p>
                     <p className="text-sm text-gray-500 italic mb-4">Rationale: {action.rationale}</p>
-                    
+
                     {/* Execution Result */}
                     {action.execution_status === 'SUCCESS' && action.execution_message && (
                       <div className="mb-4 bg-black/50 border border-cyan-900 rounded p-3">
@@ -172,16 +183,16 @@ export const ResponseActionsList: React.FC<ResponseActionsListProps> = ({ incide
                       <div className="flex gap-3 mt-4 pt-4 border-t border-border">
                         {action.status === 'PENDING_APPROVAL' && (
                           <>
-                            <Button 
-                              size="sm" 
+                            <Button
+                              size="sm"
                               variant="secondary"
                               onClick={() => handleApprove(finding.id, action.id)}
                               isLoading={actionLoading[action.id] === 'approve'}
                             >
                               <Check className="h-4 w-4 mr-2" /> Approve
                             </Button>
-                            <Button 
-                              size="sm" 
+                            <Button
+                              size="sm"
                               variant="danger"
                               onClick={() => handleReject(finding.id, action.id)}
                               isLoading={actionLoading[action.id] === 'reject'}
@@ -191,8 +202,8 @@ export const ResponseActionsList: React.FC<ResponseActionsListProps> = ({ incide
                           </>
                         )}
                         {action.status === 'APPROVED' && action.execution_status === 'NOT_EXECUTED' && (
-                          <Button 
-                            size="sm" 
+                          <Button
+                            size="sm"
                             variant="primary"
                             onClick={() => handleExecute(finding.id, action.id)}
                             isLoading={actionLoading[action.id] === 'execute'}
@@ -206,7 +217,7 @@ export const ResponseActionsList: React.FC<ResponseActionsListProps> = ({ incide
                 ))}
               </div>
             )}
-            
+
             {findingActions.length === 0 && (
               <p className="text-sm text-gray-500 italic mt-4 pt-4 border-t border-border">No response actions recommended yet.</p>
             )}

@@ -1,3 +1,4 @@
+import json
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
@@ -6,6 +7,7 @@ from app.core.database import get_db
 from app.models.incident import Incident
 from app.models.user import User
 from app.schemas.event import EventCreate, EventResponse
+from app.services.audit_log_service import create_audit_log
 from app.services.event_service import (
     create_event,
     get_event,
@@ -122,3 +124,56 @@ def list_incident_events(
         db,
         incident_id,
     )
+
+
+@router.patch(
+    "/{event_id}/incident/{incident_id}",
+    response_model=EventResponse,
+)
+def associate_event_with_incident(
+    event_id: int,
+    incident_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_role("ANALYST", "ADMIN")),
+):
+    event = get_event(db, event_id)
+
+    if event is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Event not found",
+        )
+
+    if event.incident_id is not None:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Event is already associated with an incident",
+        )
+
+    incident = db.get(Incident, incident_id)
+    if incident is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Incident not found",
+        )
+
+    previous_incident_id = event.incident_id
+    event.incident_id = incident_id
+
+    details = json.dumps({
+        "event_id": event_id,
+        "previous_incident_id": previous_incident_id,
+        "new_incident_id": incident_id
+    })
+
+    create_audit_log(
+        db=db,
+        action="ASSOCIATE_EVENT",
+        actor=current_user.username,
+        details=details
+    )
+
+    db.commit()
+    db.refresh(event)
+
+    return event

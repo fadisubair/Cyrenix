@@ -7,13 +7,14 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: '#0B0F19',
-        panel: '#1A1F2C',
-        border: '#2E364F',
-        primary: '#3B82F6',
-        secondary: '#10B981',
-        danger: '#EF4444',
-        warning: '#F59E0B',
+        background: '#09090b',
+        panel: '#18181b',
+        border: '#27272a',
+        primary: '#6366f1',
+        secondary: '#10b981',
+        danger: '#ef4444',
+        warning: '#f59e0b',
+        info: '#3b82f6',
       }
     },
   },

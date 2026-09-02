@@ -113,19 +113,19 @@ export const ResponseActionsList: React.FC<ResponseActionsListProps> = ({ incide
     }
   };
 
-  if (isLoading) return <div className="p-4 text-gray-400">Loading response actions...</div>;
+  if (isLoading) return <div className="p-4 text-zinc-400">Loading response actions...</div>;
 
   return (
-    <div className="flex flex-col h-full bg-background/50 p-4 space-y-6 overflow-auto">
+    <div className="flex flex-col h-full bg-zinc-950 p-4 space-y-6 overflow-auto">
       {findings.map(finding => {
         const findingActions = actions[finding.id] || [];
         return (
-          <div key={finding.id} className="bg-panel border border-border rounded-lg p-4">
+          <div key={finding.id} className="bg-panel border border-border rounded-md p-4">
             <div className="flex justify-between items-start mb-4">
               <div>
-                <h3 className="text-sm font-medium text-gray-400 uppercase tracking-wider mb-1">Finding Context</h3>
-                <p className="text-white font-medium">{finding.title}</p>
-                <p className="text-sm text-gray-400">{finding.description}</p>
+                <h3 className="text-sm font-medium text-zinc-400 uppercase tracking-wider mb-1">Finding Context</h3>
+                <p className="text-zinc-100 font-medium">{finding.title}</p>
+                <p className="text-sm text-zinc-400">{finding.description}</p>
               </div>
               {user?.role === 'ANALYST' && findingActions.length === 0 && (
                 <div className="flex flex-col items-end gap-2">
@@ -139,7 +139,7 @@ export const ResponseActionsList: React.FC<ResponseActionsListProps> = ({ incide
                     Recommend Action
                   </Button>
                   {actionError[finding.id] && (
-                    <div className="text-sm text-red-400 bg-red-950/50 px-3 py-1 rounded border border-red-900 mt-2">
+                    <div className="text-sm text-red-400 bg-red-500/10 px-3 py-1 rounded border border-red-500/30 mt-2">
                       {actionError[finding.id]}
                     </div>
                   )}
@@ -150,29 +150,29 @@ export const ResponseActionsList: React.FC<ResponseActionsListProps> = ({ incide
             {findingActions.length > 0 && (
               <div className="space-y-4 border-t border-border pt-4">
                 {findingActions.map(action => (
-                  <div key={action.id} className="bg-background/50 border border-border rounded-md p-4">
+                  <div key={action.id} className="bg-zinc-950 border border-border rounded-md p-4">
                     <div className="flex justify-between items-start mb-3">
                       <div>
                         <div className="flex items-center gap-3 mb-1">
-                          <h4 className="font-medium text-white">{action.action_type}</h4>
+                          <h4 className="font-medium text-zinc-100">{action.action_type}</h4>
                           {getStatusBadge(action.status)}
                           <Badge variant={action.risk_level === 'HIGH' ? 'danger' : 'warning'}>Risk: {action.risk_level}</Badge>
                         </div>
-                        <p className="text-sm text-gray-300">Target: <span className="font-mono text-cyan-400">{action.target}</span></p>
+                        <p className="text-sm text-zinc-300">Target: <span className="font-mono text-indigo-400">{action.target}</span></p>
                       </div>
                     </div>
 
-                    <p className="text-sm text-gray-400 mb-4">{action.description}</p>
-                    <p className="text-sm text-gray-500 italic mb-4">Rationale: {action.rationale}</p>
+                    <p className="text-sm text-zinc-400 mb-4">{action.description}</p>
+                    <p className="text-sm text-zinc-500 italic mb-4">Rationale: {action.rationale}</p>
 
                     {/* Execution Result */}
                     {action.execution_status === 'SUCCESS' && action.execution_message && (
-                      <div className="mb-4 bg-black/50 border border-cyan-900 rounded p-3">
+                      <div className="mb-4 bg-zinc-950 border border-emerald-500/20 rounded-md p-3">
                         <div className="flex items-center gap-2 mb-2">
-                          <Terminal className="h-4 w-4 text-cyan-500" />
-                          <span className="text-xs font-bold text-cyan-500 uppercase tracking-wider">Dry Run Execution Result</span>
+                          <Terminal className="h-4 w-4 text-emerald-400" />
+                          <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider">Dry Run Execution Result</span>
                         </div>
-                        <pre className="text-xs text-gray-300 font-mono whitespace-pre-wrap">
+                        <pre className="text-xs text-zinc-300 font-mono whitespace-pre-wrap">
                           {action.execution_message}
                         </pre>
                       </div>
@@ -219,12 +219,12 @@ export const ResponseActionsList: React.FC<ResponseActionsListProps> = ({ incide
             )}
 
             {findingActions.length === 0 && (
-              <p className="text-sm text-gray-500 italic mt-4 pt-4 border-t border-border">No response actions recommended yet.</p>
+              <p className="text-sm text-zinc-500 italic mt-4 pt-4 border-t border-border">No response actions recommended yet.</p>
             )}
           </div>
         );
       })}
-      {findings.length === 0 && <div className="text-gray-400">No findings available to recommend actions for.</div>}
+      {findings.length === 0 && <div className="text-zinc-400">No findings available to recommend actions for.</div>}
     </div>
   );
 };

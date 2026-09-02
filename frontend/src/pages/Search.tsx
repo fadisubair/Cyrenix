@@ -43,12 +43,12 @@ export const Search: React.FC = () => {
   const getResultIcon = (type: string) => {
     switch (type) {
       case 'incident': return <ShieldAlert className="h-5 w-5 text-rose-500" />;
-      case 'event': return <Activity className="h-5 w-5 text-blue-500" />;
+      case 'event': return <Activity className="h-5 w-5 text-indigo-400" />;
       case 'finding': return <Target className="h-5 w-5 text-amber-500" />;
       case 'ioc': return <Globe className="h-5 w-5 text-emerald-500" />;
-      case 'user': return <User className="h-5 w-5 text-purple-500" />;
-      case 'response_action': return <Play className="h-5 w-5 text-cyan-500" />;
-      default: return <Hash className="h-5 w-5 text-gray-500" />;
+      case 'user': return <User className="h-5 w-5 text-indigo-400" />;
+      case 'response_action': return <Play className="h-5 w-5 text-emerald-400" />;
+      default: return <Hash className="h-5 w-5 text-zinc-500" />;
     }
   };
 
@@ -67,9 +67,9 @@ export const Search: React.FC = () => {
     if (!items || items.length === 0) return null;
     
     return (
-      <div className="bg-panel border border-border rounded-lg overflow-hidden mb-6">
-        <div className="px-6 py-3 border-b border-border bg-background/50 flex justify-between items-center">
-          <h3 className="text-sm font-bold text-white uppercase tracking-wider">{title}</h3>
+      <div className="bg-panel border border-border rounded-md overflow-hidden mb-6">
+        <div className="px-6 py-3 border-b border-border bg-zinc-950/50 flex justify-between items-center">
+          <h3 className="text-sm font-bold text-zinc-100 uppercase tracking-wider">{title}</h3>
           <Badge variant="default">{items.length}</Badge>
         </div>
         <div className="divide-y divide-border/50">
@@ -77,22 +77,22 @@ export const Search: React.FC = () => {
             <Link 
               key={`${type}-${item.id}-${idx}`} 
               to={getResultLink(item)}
-              className="flex items-center justify-between p-4 hover:bg-white/[0.02] transition-colors group cursor-pointer"
+              className="flex items-center justify-between p-4 hover:bg-zinc-800/30 transition-colors group cursor-pointer"
             >
               <div className="flex items-center">
-                <div className="bg-background border border-border p-2 rounded mr-4">
+                <div className="bg-zinc-950 border border-border p-2 rounded mr-4">
                   {getResultIcon(type)}
                 </div>
                 <div>
-                  <div className="text-sm font-medium text-white group-hover:text-primary transition-colors">
+                  <div className="text-sm font-medium text-zinc-100 group-hover:text-indigo-400 transition-colors">
                     {item.title}
                   </div>
-                  <div className="text-xs text-gray-500 mt-1">
+                  <div className="text-xs text-zinc-500 mt-1">
                     ID: {item.id}
                   </div>
                 </div>
               </div>
-              <ChevronRight className="h-5 w-5 text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+              <ChevronRight className="h-5 w-5 text-zinc-500 opacity-0 group-hover:opacity-100 transition-opacity" />
             </Link>
           ))}
         </div>
@@ -112,30 +112,30 @@ export const Search: React.FC = () => {
   return (
     <div className="space-y-6 flex flex-col h-full max-w-5xl mx-auto w-full">
       <div className="text-center py-8">
-        <h1 className="text-3xl font-bold text-white tracking-wide mb-2">Global Search</h1>
-        <p className="text-gray-400">Query across all system entities and threat intelligence</p>
+        <h1 className="text-3xl font-bold text-zinc-100 tracking-wide mb-2">Global Search</h1>
+        <p className="text-zinc-400">Query across all system entities and threat intelligence</p>
       </div>
 
       <form onSubmit={handleSearch} className="relative max-w-3xl mx-auto w-full mb-8">
-        <SearchIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-6 w-6 text-gray-400" />
+        <SearchIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-6 w-6 text-zinc-400" />
         <input 
           type="text" 
           placeholder="Search for incidents, IP addresses, hashes, users..." 
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          className="w-full bg-panel border-2 border-border rounded-xl pl-14 pr-4 py-4 text-lg focus:border-primary focus:ring-1 focus:ring-primary outline-none shadow-lg text-white"
+          className="w-full bg-panel border-2 border-border rounded-md pl-14 pr-4 py-4 text-lg focus:border-primary focus:ring-1 focus:ring-primary outline-none shadow-lg text-zinc-100"
           autoFocus
         />
         <button 
           type="submit"
-          className="absolute right-3 top-1/2 -translate-y-1/2 bg-primary text-primary-foreground px-4 py-2 rounded-lg font-medium hover:bg-primary/90 transition-colors"
+          className="absolute right-3 top-1/2 -translate-y-1/2 bg-primary text-indigo-400-foreground px-4 py-2 rounded-md font-medium hover:bg-primary/90 transition-colors"
         >
           Search
         </button>
       </form>
 
       {isLoading ? (
-        <div className="text-center py-12 text-gray-400">
+        <div className="text-center py-12 text-zinc-400">
           <div className="animate-pulse flex flex-col items-center">
             <SearchIcon className="h-8 w-8 mb-4 opacity-50" />
             Searching CYRENIX data lake...
@@ -143,14 +143,14 @@ export const Search: React.FC = () => {
         </div>
       ) : results ? (
         <div className="flex-1 pb-12">
-          <div className="text-sm text-gray-400 mb-6 flex justify-between items-center">
-            <span>Found {totalResults} results for "<strong className="text-white">{queryParam}</strong>"</span>
+          <div className="text-sm text-zinc-400 mb-6 flex justify-between items-center">
+            <span>Found {totalResults} results for "<strong className="text-zinc-100">{queryParam}</strong>"</span>
           </div>
           
           {totalResults === 0 ? (
-            <div className="bg-panel border border-border rounded-lg p-12 text-center text-gray-500">
+            <div className="bg-panel border border-border rounded-md p-12 text-center text-zinc-500">
               <SearchIcon className="h-12 w-12 mx-auto mb-4 opacity-20" />
-              <h3 className="text-lg font-medium text-white mb-2">No results found</h3>
+              <h3 className="text-lg font-medium text-zinc-100 mb-2">No results found</h3>
               <p>Try adjusting your search terms or using different keywords.</p>
             </div>
           ) : (

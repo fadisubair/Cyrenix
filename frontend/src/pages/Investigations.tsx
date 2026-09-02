@@ -56,12 +56,12 @@ const InvestigationRow: React.FC<{ incident: Incident, findings: Finding[], onCl
   }
 
   return (
-    <tr onClick={onClick} className="border-b border-border/50 hover:bg-white/[0.02] cursor-pointer transition-colors group">
+    <tr onClick={onClick} className="border-b border-border/50 hover:bg-zinc-800/30 cursor-pointer transition-colors group">
       <td className="px-4 py-4 text-sm">
-        <div className="font-bold text-white mb-1">INC-{(incident.id || 0).toString().padStart(4, '0')}</div>
-        <div className="text-gray-400 truncate max-w-[200px]">{incident.title}</div>
+        <div className="font-bold text-zinc-100 mb-1">INC-{(incident.id || 0).toString().padStart(4, '0')}</div>
+        <div className="text-zinc-400 truncate max-w-[200px]">{incident.title}</div>
       </td>
-      <td className="px-4 py-4 text-sm text-gray-300">
+      <td className="px-4 py-4 text-sm text-zinc-300">
         <div className="flex items-center">
           <User className="h-4 w-4 mr-1 opacity-50" />
           {incident.owner_id ? `Analyst ${incident.owner_id}` : 'Unassigned'}
@@ -77,17 +77,17 @@ const InvestigationRow: React.FC<{ incident: Incident, findings: Finding[], onCl
       </td>
       <td className="px-4 py-4 text-sm">
         <div className="flex items-center">
-          <div className="w-16 bg-background rounded-full h-1.5 mr-2 overflow-hidden border border-border">
+          <div className="w-16 bg-zinc-950 rounded-full h-1.5 mr-2 overflow-hidden border border-border">
             <div className="bg-primary h-1.5 rounded-full" style={{ width: `${(incident.confidence || 0) * 100}%` }}></div>
           </div>
-          <span className="text-xs text-gray-400">{Math.round((incident.confidence || 0) * 100)}%</span>
+          <span className="text-xs text-zinc-400">{Math.round((incident.confidence || 0) * 100)}%</span>
         </div>
       </td>
-      <td className="px-4 py-4 text-sm text-gray-400 truncate max-w-[150px]">{missingEvidence}</td>
-      <td className="px-4 py-4 text-sm text-gray-300 truncate max-w-[150px]">{nextStep}</td>
-      <td className="px-4 py-4 text-sm text-gray-400">
+      <td className="px-4 py-4 text-sm text-zinc-400 truncate max-w-[150px]">{missingEvidence}</td>
+      <td className="px-4 py-4 text-sm text-zinc-300 truncate max-w-[150px]">{nextStep}</td>
+      <td className="px-4 py-4 text-sm text-zinc-400">
         {new Date(incident.updated_at).toLocaleDateString()}
-        <ArrowRight className="h-4 w-4 inline ml-4 opacity-0 group-hover:opacity-100 transition-opacity text-primary" />
+        <ArrowRight className="h-4 w-4 inline ml-4 opacity-0 group-hover:opacity-100 transition-opacity text-indigo-400" />
       </td>
     </tr>
   );
@@ -122,27 +122,27 @@ export const Investigations: React.FC = () => {
     <div className="space-y-6 flex flex-col h-full">
       <div className="flex justify-between items-end">
         <div>
-          <h1 className="text-2xl font-bold text-white tracking-wide">Investigations</h1>
-          <p className="text-gray-400">Analyst case management queue</p>
+          <h1 className="text-2xl font-bold text-zinc-100 tracking-wide">Investigations</h1>
+          <p className="text-zinc-400">Analyst case management queue</p>
         </div>
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
           <input 
             type="text" 
             placeholder="Filter queue..." 
-            className="bg-background border border-border rounded-md pl-9 pr-4 py-1.5 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+            className="bg-zinc-950 border border-border rounded-md pl-9 pr-4 py-1.5 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
           />
         </div>
       </div>
 
-      <div className="bg-panel border border-border rounded-lg overflow-hidden flex flex-col flex-1">
+      <div className="bg-panel border border-border rounded-md overflow-hidden flex flex-col flex-1">
         {isLoading ? (
-          <div className="p-8 text-center text-gray-400">Loading queue...</div>
+          <div className="p-8 text-center text-zinc-400">Loading queue...</div>
         ) : (
           <div className="overflow-x-auto flex-1">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-background/50 border-b border-border text-xs text-gray-500 uppercase tracking-wider">
+                <tr className="bg-zinc-950/50 border-b border-border text-xs text-zinc-500 uppercase tracking-wider">
                   <th className="px-4 py-3 font-medium">Incident</th>
                   <th className="px-4 py-3 font-medium">Owner</th>
                   <th className="px-4 py-3 font-medium">Priority</th>
@@ -165,7 +165,7 @@ export const Investigations: React.FC = () => {
                 
                 {incidents.length === 0 && (
                   <tr>
-                    <td colSpan={8} className="px-4 py-12 text-center text-gray-500">
+                    <td colSpan={8} className="px-4 py-12 text-center text-zinc-500">
                       <Activity className="h-8 w-8 mx-auto mb-3 opacity-50" />
                       No active investigations in queue.
                     </td>

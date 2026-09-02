@@ -26,36 +26,42 @@ export const AttackChainView: React.FC<Props> = ({ incidentId }) => {
     fetch();
   }, [incidentId]);
 
-  if (isLoading) return <div className="p-4 text-gray-400">Loading attack chain...</div>;
-  if (!chains.length) return <div className="p-4 text-gray-400">No attack chains correlated for this incident.</div>;
+  if (isLoading) return <div className="p-4 text-zinc-400">Loading attack chain...</div>;
+  if (!chains.length) return <div className="p-4 text-zinc-400">No attack chains correlated for this incident.</div>;
 
   return (
-    <div className="p-4 space-y-6">
+    <div className="p-4 space-y-8">
       {chains.map(chain => (
-        <div key={chain.id} className="bg-panel border border-border rounded-lg p-4">
-          <h3 className="text-lg font-medium text-white mb-2 flex items-center gap-2">
-            <Network className="w-5 h-5 text-primary" />
-            {chain.name}
-          </h3>
-          <p className="text-sm text-gray-400 mb-6">{chain.description}</p>
+        <div key={chain.id}>
+          <div className="mb-6">
+            <h3 className="text-sm font-semibold text-zinc-200 uppercase tracking-wider mb-1 flex items-center gap-2">
+              <Network className="w-4 h-4 text-indigo-400" />
+              {chain.name}
+            </h3>
+            <p className="text-sm text-zinc-400">{chain.description}</p>
+          </div>
           
-          <div className="flex items-center gap-4 flex-wrap">
+          <div className="relative border-l border-zinc-800 ml-2 space-y-6">
             {chain.stages.map((stage, idx) => (
-              <React.Fragment key={stage.id}>
-                <div className="bg-background border border-border p-4 rounded-lg flex-1 min-w-[200px]">
-                  <div className="text-sm font-medium text-white mb-2">{stage.name}</div>
-                  <div className="text-xs text-gray-400">Order: {stage.order}</div>
+              <div key={stage.id} className="relative pl-6">
+                <div className="absolute -left-[5px] top-1.5 h-2.5 w-2.5 rounded-full bg-zinc-950 border-2 border-indigo-500/50"></div>
+                <div className="flex flex-col">
+                  <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest mb-1">Stage {stage.order}</span>
+                  <h4 className="text-sm font-medium text-zinc-100">{stage.name}</h4>
+                  
                   {stage.mitre_tactic && (
-                    <div className="mt-2 flex flex-wrap gap-2">
-                      <Badge variant="info">{stage.mitre_tactic}</Badge>
-                      {stage.mitre_technique && <Badge variant="warning">{stage.mitre_technique}</Badge>}
+                    <div className="mt-2 flex items-center gap-2 text-xs font-mono">
+                      <span className="text-zinc-500">TACTIC:</span> <span className="text-indigo-400">{stage.mitre_tactic}</span>
+                      {stage.mitre_technique && (
+                        <>
+                          <span className="text-zinc-600 mx-1">|</span>
+                          <span className="text-zinc-500">TECHNIQUE:</span> <span className="text-amber-400">{stage.mitre_technique}</span>
+                        </>
+                      )}
                     </div>
                   )}
                 </div>
-                {idx < chain.stages.length - 1 && (
-                  <ArrowRight className="w-6 h-6 text-gray-600 flex-shrink-0" />
-                )}
-              </React.Fragment>
+              </div>
             ))}
           </div>
         </div>

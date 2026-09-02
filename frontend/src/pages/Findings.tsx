@@ -65,21 +65,21 @@ export const Findings: React.FC = () => {
     <div className="space-y-6 flex flex-col h-full">
       <div className="flex justify-between items-end">
         <div>
-          <h1 className="text-2xl font-bold text-white tracking-wide">Global Findings</h1>
-          <p className="text-gray-400">Review AI-identified threats and anomalies</p>
+          <h1 className="text-2xl font-bold text-zinc-100 tracking-wide">Global Findings</h1>
+          <p className="text-zinc-400">Review AI-identified threats and anomalies</p>
         </div>
       </div>
 
       {/* Filters */}
-      <div className="bg-panel border border-border p-4 rounded-lg flex flex-wrap gap-4">
+      <div className="bg-panel border border-border p-4 rounded-md flex flex-wrap gap-4">
         <div className="flex-1 min-w-[250px] relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
           <input 
             type="text" 
             placeholder="Search findings, types, MITRE techniques..." 
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-background border border-border rounded-md pl-9 pr-4 py-2 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none"
+            className="w-full bg-zinc-950 border border-border rounded-md pl-9 pr-4 py-2 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none"
           />
         </div>
         
@@ -87,7 +87,7 @@ export const Findings: React.FC = () => {
           <select 
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="w-full bg-background border border-border rounded-md px-3 py-2 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none"
+            className="w-full bg-zinc-950 border border-border rounded-md px-3 py-2 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none"
           >
             <option value="ALL">All Statuses</option>
             <option value="PROPOSED">Proposed</option>
@@ -102,7 +102,7 @@ export const Findings: React.FC = () => {
           <select 
             value={severityFilter}
             onChange={(e) => setSeverityFilter(e.target.value)}
-            className="w-full bg-background border border-border rounded-md px-3 py-2 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none"
+            className="w-full bg-zinc-950 border border-border rounded-md px-3 py-2 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none"
           >
             <option value="ALL">All Severities</option>
             <option value="CRITICAL">Critical</option>
@@ -114,14 +114,14 @@ export const Findings: React.FC = () => {
       </div>
 
       {/* Findings Table */}
-      <div className="bg-panel border border-border rounded-lg overflow-hidden flex flex-col flex-1">
+      <div className="bg-panel border border-border rounded-md overflow-hidden flex flex-col flex-1">
         {isLoading ? (
-          <div className="p-8 text-center text-gray-400">Loading findings...</div>
+          <div className="p-8 text-center text-zinc-400">Loading findings...</div>
         ) : (
           <div className="overflow-x-auto flex-1">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-background/50 border-b border-border text-xs text-gray-500 uppercase tracking-wider">
+                <tr className="bg-zinc-950/50 border-b border-border text-xs text-zinc-500 uppercase tracking-wider">
                   <th className="px-4 py-3 font-medium">Finding</th>
                   <th className="px-4 py-3 font-medium">Incident</th>
                   <th className="px-4 py-3 font-medium">Type</th>
@@ -139,21 +139,21 @@ export const Findings: React.FC = () => {
                     <tr 
                       key={finding.id} 
                       onClick={() => navigate(`/incidents/${finding.incident_id}`)}
-                      className="hover:bg-white/[0.02] cursor-pointer transition-colors group"
+                      className="hover:bg-zinc-800/30 cursor-pointer transition-colors group"
                     >
                       <td className="px-4 py-4 text-sm">
-                        <div className="font-medium text-white mb-1 truncate max-w-[250px]">{finding.title}</div>
-                        <div className="text-gray-500 text-xs truncate max-w-[250px]">{finding.description}</div>
+                        <div className="font-medium text-zinc-100 mb-1 truncate max-w-[250px]">{finding.title}</div>
+                        <div className="text-zinc-500 text-xs truncate max-w-[250px]">{finding.description}</div>
                       </td>
                       <td className="px-4 py-4 text-sm">
                         {incident ? (
-                          <div className="flex items-center text-gray-300">
+                          <div className="flex items-center text-zinc-300">
                             <ShieldAlert className="h-3 w-3 mr-1 opacity-50" />
                             INC-{(incident.id || 0).toString().padStart(4, '0')}
                           </div>
-                        ) : <span className="text-gray-600">-</span>}
+                        ) : <span className="text-zinc-600">-</span>}
                       </td>
-                      <td className="px-4 py-4 text-sm text-gray-400">
+                      <td className="px-4 py-4 text-sm text-zinc-400">
                         {finding.finding_type}
                       </td>
                       <td className="px-4 py-4 text-sm">
@@ -167,10 +167,10 @@ export const Findings: React.FC = () => {
                       </td>
                       <td className="px-4 py-4 text-sm">
                         <div className="flex items-center">
-                          <div className="w-16 bg-background rounded-full h-1.5 mr-2 overflow-hidden border border-border">
+                          <div className="w-16 bg-zinc-950 rounded-full h-1.5 mr-2 overflow-hidden border border-border">
                             <div className="bg-primary h-1.5 rounded-full" style={{ width: `${(finding.confidence || 0) * 100}%` }}></div>
                           </div>
-                          <span className="text-xs text-gray-400">{Math.round((finding.confidence || 0) * 100)}%</span>
+                          <span className="text-xs text-zinc-400">{Math.round((finding.confidence || 0) * 100)}%</span>
                         </div>
                       </td>
                       <td className="px-4 py-4 text-sm">
@@ -182,11 +182,11 @@ export const Findings: React.FC = () => {
                           {finding.status}
                         </Badge>
                       </td>
-                      <td className="px-4 py-4 text-sm text-gray-400 whitespace-nowrap">
+                      <td className="px-4 py-4 text-sm text-zinc-400 whitespace-nowrap">
                         {new Date(finding.created_at).toLocaleDateString()}
                       </td>
                       <td className="px-4 py-4 text-sm text-right">
-                        <ArrowRight className="h-4 w-4 inline opacity-0 group-hover:opacity-100 transition-opacity text-primary" />
+                        <ArrowRight className="h-4 w-4 inline opacity-0 group-hover:opacity-100 transition-opacity text-indigo-400" />
                       </td>
                     </tr>
                   );
@@ -194,7 +194,7 @@ export const Findings: React.FC = () => {
                 
                 {filteredFindings.length === 0 && (
                   <tr>
-                    <td colSpan={8} className="px-4 py-12 text-center text-gray-500">
+                    <td colSpan={8} className="px-4 py-12 text-center text-zinc-500">
                       <Target className="h-8 w-8 mx-auto mb-3 opacity-50" />
                       No findings match the current filters.
                     </td>

@@ -43,23 +43,23 @@ export const Login: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
+    <div className="min-h-screen bg-zinc-950 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-10">
           <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-panel border border-border mb-4">
-            <ShieldAlert className="h-8 w-8 text-primary" />
+            <ShieldAlert className="h-8 w-8 text-indigo-500" />
           </div>
-          <h1 className="text-3xl font-bold text-white tracking-widest">CYRENIX</h1>
-          <p className="text-gray-400 mt-2">Incident Response Assistant</p>
+          <h1 className="text-3xl font-bold text-zinc-100 tracking-widest">CYRENIX</h1>
+          <p className="text-zinc-400 mt-2">Incident Response Assistant</p>
         </div>
 
-        <div className="bg-panel border border-border rounded-lg shadow-xl p-8 relative overflow-hidden">
+        <div className="bg-panel border border-border rounded-md shadow-xl p-8 relative overflow-hidden">
           {/* Decorative elements */}
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary via-cyan-500 to-emerald-500"></div>
+          <div className="absolute top-0 left-0 w-full h-1 bg-indigo-500"></div>
           
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-zinc-300 mb-2">
                 Username
               </label>
               <div className="relative">
@@ -67,7 +67,7 @@ export const Login: React.FC = () => {
                   type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="w-full bg-background border border-border rounded-md px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                  className="w-full bg-zinc-950 border border-border rounded-md px-4 py-2.5 text-zinc-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                   placeholder="Enter your username"
                   required
                 />
@@ -75,18 +75,18 @@ export const Login: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-zinc-300 mb-2">
                 Password
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-gray-500" />
+                  <Lock className="h-5 w-5 text-zinc-500" />
                 </div>
                 <input
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-background border border-border rounded-md pl-10 pr-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                  className="w-full bg-zinc-950 border border-border rounded-md pl-10 pr-4 py-2.5 text-zinc-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                   placeholder="••••••••"
                   required
                 />
@@ -94,7 +94,7 @@ export const Login: React.FC = () => {
             </div>
 
             {error && (
-              <div className="bg-red-900/30 border border-red-800 text-red-400 p-3 rounded-md text-sm text-center">
+              <div className="bg-red-500/10 border border-red-500/30 text-red-400 p-3 rounded-md text-sm text-center">
                 {error}
               </div>
             )}

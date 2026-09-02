@@ -62,7 +62,7 @@ export const IncidentDetails: React.FC = () => {
     }
   };
 
-  if (isLoading) return <div className="text-gray-400">Loading incident...</div>;
+  if (isLoading) return <div className="text-zinc-400">Loading incident...</div>;
   if (!incident) return <div className="text-red-400">Incident not found.</div>;
 
   const tabs = [
@@ -81,7 +81,7 @@ export const IncidentDetails: React.FC = () => {
       <div className="flex justify-between items-start">
         <div>
           <div className="flex items-center gap-3 mb-2">
-            <h1 className="text-2xl font-bold text-white tracking-wide">
+            <h1 className="text-2xl font-bold text-zinc-100 tracking-wide">
               INC-{incident.id.toString().padStart(4, '0')}: {incident.title}
             </h1>
             <Badge variant={incident.severity === 'CRITICAL' ? 'danger' : incident.severity === 'HIGH' ? 'warning' : incident.severity === 'MEDIUM' ? 'info' : 'default'}>
@@ -91,7 +91,7 @@ export const IncidentDetails: React.FC = () => {
               {incident.status}
             </Badge>
           </div>
-          <p className="text-gray-400">{incident.description}</p>
+          <p className="text-zinc-400 max-w-3xl">{incident.description}</p>
         </div>
         
         {user?.role === 'ANALYST' && (
@@ -101,7 +101,7 @@ export const IncidentDetails: React.FC = () => {
               Analyze Incident
             </Button>
             {analyzeError && (
-              <p className="text-sm text-red-400 max-w-sm text-right bg-red-950/30 p-2 rounded border border-red-900/50">
+              <p className="text-sm text-red-400 max-w-sm text-right bg-red-500/10 p-2 rounded border border-red-500/20">
                 {analyzeError}
               </p>
             )}
@@ -109,8 +109,8 @@ export const IncidentDetails: React.FC = () => {
         )}
       </div>
 
-      <div className="flex-1 bg-panel border border-border rounded-lg overflow-hidden flex flex-col">
-        <div className="border-b border-border px-4 flex gap-6 bg-background/30">
+      <div className="flex-1 bg-panel border border-border rounded-md overflow-hidden flex flex-col">
+        <div className="border-b border-border px-4 flex gap-6 bg-zinc-900/50">
           {tabs.map(tab => (
             <button
               key={tab.id}
@@ -118,7 +118,7 @@ export const IncidentDetails: React.FC = () => {
               className={`py-4 text-sm font-medium border-b-2 transition-colors ${
                 activeTab === tab.id 
                   ? 'border-primary text-primary' 
-                  : 'border-transparent text-gray-400 hover:text-gray-200'
+                  : 'border-transparent text-zinc-400 hover:text-zinc-200 hover:border-zinc-700'
               }`}
             >
               {tab.label}

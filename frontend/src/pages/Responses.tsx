@@ -52,10 +52,10 @@ export const Responses: React.FC = () => {
       case 'PENDING_APPROVAL': return <AlertCircle className="h-4 w-4 text-amber-500" />;
       case 'APPROVED': return <CheckCircle className="h-4 w-4 text-emerald-500" />;
       case 'REJECTED': return <XCircle className="h-4 w-4 text-rose-500" />;
-      case 'EXECUTING': return <RefreshCw className="h-4 w-4 text-primary animate-spin" />;
+      case 'EXECUTING': return <RefreshCw className="h-4 w-4 text-indigo-400 animate-spin" />;
       case 'SUCCESS': return <Play className="h-4 w-4 text-emerald-500" />;
       case 'FAILED': return <AlertCircle className="h-4 w-4 text-rose-500" />;
-      default: return <AlertCircle className="h-4 w-4 text-gray-500" />;
+      default: return <AlertCircle className="h-4 w-4 text-zinc-500" />;
     }
   };
 
@@ -75,47 +75,47 @@ export const Responses: React.FC = () => {
     <div className="space-y-6 flex flex-col h-full">
       <div className="flex justify-between items-end">
         <div>
-          <h1 className="text-2xl font-bold text-white tracking-wide">Response Center</h1>
-          <p className="text-gray-400">Global queue of remediation and containment actions</p>
+          <h1 className="text-2xl font-bold text-zinc-100 tracking-wide">Response Center</h1>
+          <p className="text-zinc-400">Global queue of remediation and containment actions</p>
         </div>
       </div>
 
       {/* Summary Cards */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-        <div className="bg-panel border border-border p-4 rounded-lg flex flex-col justify-between">
-          <div className="text-sm font-medium text-gray-400 mb-2">Pending Approval</div>
+        <div className="bg-panel border border-border p-4 rounded-md flex flex-col justify-between">
+          <div className="text-sm font-medium text-zinc-400 mb-2">Pending Approval</div>
           <div className="text-2xl font-bold text-amber-500">
             {actions.filter(a => a.status === 'PENDING_APPROVAL').length}
           </div>
         </div>
-        <div className="bg-panel border border-border p-4 rounded-lg flex flex-col justify-between">
-          <div className="text-sm font-medium text-gray-400 mb-2">Approved</div>
+        <div className="bg-panel border border-border p-4 rounded-md flex flex-col justify-between">
+          <div className="text-sm font-medium text-zinc-400 mb-2">Approved</div>
           <div className="text-2xl font-bold text-emerald-500">
             {actions.filter(a => a.status === 'APPROVED').length}
           </div>
         </div>
-        <div className="bg-panel border border-border p-4 rounded-lg flex flex-col justify-between">
-          <div className="text-sm font-medium text-gray-400 mb-2">Executing</div>
-          <div className="text-2xl font-bold text-primary">
+        <div className="bg-panel border border-border p-4 rounded-md flex flex-col justify-between">
+          <div className="text-sm font-medium text-zinc-400 mb-2">Executing</div>
+          <div className="text-2xl font-bold text-indigo-400">
             {actions.filter(a => a.status === 'EXECUTING').length}
           </div>
         </div>
-        <div className="bg-panel border border-border p-4 rounded-lg flex flex-col justify-between">
-          <div className="text-sm font-medium text-gray-400 mb-2">Completed</div>
+        <div className="bg-panel border border-border p-4 rounded-md flex flex-col justify-between">
+          <div className="text-sm font-medium text-zinc-400 mb-2">Completed</div>
           <div className="text-2xl font-bold text-emerald-400">
             {actions.filter(a => a.status === 'SUCCESS').length}
           </div>
         </div>
-        <div className="bg-panel border border-border p-4 rounded-lg flex flex-col justify-between">
-          <div className="text-sm font-medium text-gray-400 mb-2">Failed</div>
+        <div className="bg-panel border border-border p-4 rounded-md flex flex-col justify-between">
+          <div className="text-sm font-medium text-zinc-400 mb-2">Failed</div>
           <div className="text-2xl font-bold text-rose-500">
             {actions.filter(a => a.status === 'FAILED').length}
           </div>
         </div>
       </div>
 
-      <div className="bg-panel border border-border rounded-lg overflow-hidden flex flex-col flex-1">
-        <div className="px-6 py-4 border-b border-border bg-background/50 flex justify-between items-center">
+      <div className="bg-panel border border-border rounded-md overflow-hidden flex flex-col flex-1">
+        <div className="px-6 py-4 border-b border-border bg-zinc-950/50 flex justify-between items-center">
           <div className="flex space-x-2">
             {['ALL', 'PENDING_APPROVAL', 'APPROVED', 'SUCCESS', 'REJECTED', 'FAILED'].map(status => (
               <button
@@ -123,8 +123,8 @@ export const Responses: React.FC = () => {
                 onClick={() => setStatusFilter(status)}
                 className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
                   statusFilter === status 
-                    ? 'bg-primary text-primary-foreground' 
-                    : 'bg-background border border-border text-gray-400 hover:text-white'
+                    ? 'bg-primary text-indigo-400-foreground' 
+                    : 'bg-zinc-950 border border-border text-zinc-400 hover:text-zinc-100'
                 }`}
               >
                 {status}
@@ -134,12 +134,12 @@ export const Responses: React.FC = () => {
         </div>
         
         {isLoading ? (
-          <div className="p-12 text-center text-gray-400">Loading response actions...</div>
+          <div className="p-12 text-center text-zinc-400">Loading response actions...</div>
         ) : (
           <div className="overflow-x-auto flex-1">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-background/50 border-b border-border text-xs text-gray-500 uppercase tracking-wider">
+                <tr className="bg-zinc-950/50 border-b border-border text-xs text-zinc-500 uppercase tracking-wider">
                   <th className="px-6 py-3 font-medium">Action</th>
                   <th className="px-6 py-3 font-medium">Target</th>
                   <th className="px-6 py-3 font-medium">Context (Incident/Finding)</th>
@@ -157,30 +157,30 @@ export const Responses: React.FC = () => {
                     <tr 
                       key={action.id} 
                       onClick={() => navigate(`/incidents/${incident?.id || 1}`)}
-                      className="hover:bg-white/[0.02] transition-colors group cursor-pointer"
+                      className="hover:bg-zinc-800/30 transition-colors group cursor-pointer"
                     >
-                      <td className="px-6 py-4 text-sm font-medium text-white flex items-center">
+                      <td className="px-6 py-4 text-sm font-medium text-zinc-100 flex items-center">
                         <span className="mr-3">{getStatusIcon(action.status)}</span>
                         {action.action_type.replace(/_/g, ' ')}
                       </td>
                       <td className="px-6 py-4 text-sm">
-                        <div className="bg-[#0D1117] border border-border/50 rounded px-2 py-1 text-xs font-mono text-gray-300 inline-block truncate max-w-[150px]">
+                        <div className="bg-zinc-950 border border-border/50 rounded px-2 py-1 text-xs font-mono text-zinc-300 inline-block truncate max-w-[150px]">
                           {action.target}
                         </div>
                       </td>
                       <td className="px-6 py-4 text-sm">
                         {incident ? (
                           <div className="flex flex-col">
-                            <span className="text-gray-300 font-medium flex items-center">
+                            <span className="text-zinc-300 font-medium flex items-center">
                               <ShieldAlert className="h-3 w-3 mr-1 opacity-50" />
                               INC-{(incident.id || 0).toString().padStart(4, '0')}
                             </span>
-                            <span className="text-gray-500 text-xs truncate max-w-[200px]">
+                            <span className="text-zinc-500 text-xs truncate max-w-[200px]">
                               {finding?.title}
                             </span>
                           </div>
                         ) : (
-                          <span className="text-gray-600">-</span>
+                          <span className="text-zinc-600">-</span>
                         )}
                       </td>
                       <td className="px-6 py-4 text-sm">
@@ -188,14 +188,14 @@ export const Responses: React.FC = () => {
                           {action.status}
                         </Badge>
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-400">
+                      <td className="px-6 py-4 text-sm text-zinc-400">
                         <div className="flex flex-col">
                           <span>{new Date(action.created_at).toLocaleDateString()}</span>
-                          <span className="text-xs text-gray-600">{new Date(action.created_at).toLocaleTimeString()}</span>
+                          <span className="text-xs text-zinc-600">{new Date(action.created_at).toLocaleTimeString()}</span>
                         </div>
                       </td>
                       <td className="px-6 py-4 text-sm text-right">
-                        <ArrowRight className="h-4 w-4 inline opacity-0 group-hover:opacity-100 transition-opacity text-primary" />
+                        <ArrowRight className="h-4 w-4 inline opacity-0 group-hover:opacity-100 transition-opacity text-indigo-400" />
                       </td>
                     </tr>
                   );
@@ -203,7 +203,7 @@ export const Responses: React.FC = () => {
                 
                 {filteredActions.length === 0 && (
                   <tr>
-                    <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
+                    <td colSpan={6} className="px-6 py-12 text-center text-zinc-500">
                       <Play className="h-8 w-8 mx-auto mb-3 opacity-50" />
                       No response actions found in this state.
                     </td>

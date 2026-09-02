@@ -42,23 +42,23 @@ export const Mitre: React.FC = () => {
     <div className="space-y-6 flex flex-col h-full">
       <div className="flex justify-between items-end">
         <div>
-          <h1 className="text-2xl font-bold text-white tracking-wide flex items-center">
-            <Target className="mr-3 h-6 w-6 text-primary" />
+          <h1 className="text-2xl font-bold text-zinc-100 tracking-wide flex items-center">
+            <Target className="mr-3 h-6 w-6 text-indigo-400" />
             MITRE ATT&CK Matrix
           </h1>
-          <p className="text-gray-400">Threat Coverage and Finding Mapping</p>
+          <p className="text-zinc-400">Threat Coverage and Finding Mapping</p>
         </div>
       </div>
 
-      <div className="bg-panel border border-border p-6 rounded-lg mb-6">
-        <h2 className="text-lg font-medium text-white mb-4">Coverage Summary</h2>
+      <div className="bg-panel border border-border p-6 rounded-md mb-6">
+        <h2 className="text-lg font-medium text-zinc-100 mb-4">Coverage Summary</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
           {TACTICS.slice(0, 12).map(tactic => {
             const hits = coverage[tactic] ? coverage[tactic].length : 0;
             return (
-              <div key={`summary-${tactic}`} className="bg-background border border-border/50 p-3 rounded flex flex-col items-center text-center">
-                <span className="text-xs font-medium text-gray-400 mb-1 leading-tight">{tactic}</span>
-                <span className={`text-xl font-bold ${hits > 0 ? 'text-rose-500' : 'text-gray-600'}`}>
+              <div key={`summary-${tactic}`} className="bg-zinc-950 border border-border/50 p-3 rounded flex flex-col items-center text-center">
+                <span className="text-xs font-medium text-zinc-400 mb-1 leading-tight">{tactic}</span>
+                <span className={`text-xl font-bold ${hits > 0 ? 'text-rose-500' : 'text-zinc-600'}`}>
                   {hits}
                 </span>
               </div>
@@ -67,9 +67,9 @@ export const Mitre: React.FC = () => {
         </div>
       </div>
 
-      <div className="bg-panel border border-border rounded-lg overflow-x-auto flex-1">
+      <div className="bg-panel border border-border rounded-md overflow-x-auto flex-1">
         {isLoading ? (
-          <div className="p-12 text-center text-gray-400">Building MITRE ATT&CK Matrix...</div>
+          <div className="p-12 text-center text-zinc-400">Building MITRE ATT&CK Matrix...</div>
         ) : (
           <div className="min-w-max p-4 flex gap-4 h-full">
             {TACTICS.map(tactic => {
@@ -96,9 +96,9 @@ export const Mitre: React.FC = () => {
 
               return (
                 <div key={tactic} className="w-56 flex-shrink-0 flex flex-col">
-                  <div className="bg-background/80 border border-border rounded-t-md p-3 mb-2 sticky top-0 z-10">
-                    <h3 className="text-sm font-bold text-white text-center">{tactic}</h3>
-                    <div className="text-[10px] text-gray-500 text-center mt-1">
+                  <div className="bg-zinc-950/80 border border-border rounded-t-md p-3 mb-2 sticky top-0 z-10">
+                    <h3 className="text-sm font-bold text-zinc-100 text-center">{tactic}</h3>
+                    <div className="text-[10px] text-zinc-500 text-center mt-1">
                       {techniqueList.length} Techniques Detected
                     </div>
                   </div>
@@ -112,24 +112,24 @@ export const Mitre: React.FC = () => {
                           onClick={() => navigate(`/findings?search=${tech.technique_id}`)}
                         >
                           <div className="flex justify-between items-start mb-1">
-                            <span className="text-[10px] font-bold text-rose-400 bg-rose-950/50 px-1.5 py-0.5 rounded">
+                            <span className="text-[10px] font-bold text-rose-400 bg-rose-500/10 px-1.5 py-0.5 rounded">
                               {tech.technique_id}
                             </span>
                             <span className="text-[10px] text-rose-300 bg-rose-500/20 px-1.5 py-0.5 rounded-full">
                               {tech.hits} {tech.hits === 1 ? 'Hit' : 'Hits'}
                             </span>
                           </div>
-                          <div className="text-xs font-medium text-white mb-2 leading-tight">
+                          <div className="text-xs font-medium text-zinc-100 mb-2 leading-tight">
                             {tech.technique_name}
                           </div>
-                          <div className="flex items-center text-[10px] text-gray-400 group-hover:text-rose-300 transition-colors">
+                          <div className="flex items-center text-[10px] text-zinc-400 group-hover:text-rose-300 transition-colors">
                             <Crosshair className="h-3 w-3 mr-1" />
                             View mapped findings
                           </div>
                         </div>
                       ))
                     ) : (
-                      <div className="h-full border border-dashed border-border/30 rounded p-3 flex items-center justify-center text-gray-600 text-xs italic">
+                      <div className="h-full border border-dashed border-border/30 rounded p-3 flex items-center justify-center text-zinc-600 text-xs italic">
                         No activity
                       </div>
                     )}

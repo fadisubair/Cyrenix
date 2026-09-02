@@ -76,12 +76,12 @@ export const Approvals: React.FC = () => {
     <div className="space-y-6 flex flex-col h-full">
       <div className="flex justify-between items-end">
         <div>
-          <h1 className="text-2xl font-bold text-white tracking-wide">Approvals Queue</h1>
-          <p className="text-gray-400">Manual intervention required for high-impact actions and proposed findings</p>
+          <h1 className="text-2xl font-bold text-zinc-100 tracking-wide">Approvals Queue</h1>
+          <p className="text-zinc-400">Manual intervention required for high-impact actions and proposed findings</p>
         </div>
         <button 
           onClick={fetchData}
-          className="flex items-center px-4 py-2 bg-background border border-border text-gray-300 rounded-md text-sm hover:bg-white/[0.02] transition-colors"
+          className="flex items-center px-4 py-2 bg-zinc-950 border border-border text-zinc-300 rounded-md text-sm hover:bg-zinc-800/30 transition-colors"
         >
           <Clock className="h-4 w-4 mr-2" />
           Refresh
@@ -90,10 +90,10 @@ export const Approvals: React.FC = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 flex-1 overflow-y-auto">
         {/* Response Actions Pending Approval */}
-        <div className="bg-panel border border-border rounded-lg flex flex-col h-[500px]">
-          <div className="px-6 py-4 border-b border-border bg-background/50 flex justify-between items-center">
-            <h2 className="text-lg font-medium text-white flex items-center">
-              <Play className="h-5 w-5 mr-2 text-primary" />
+        <div className="bg-panel border border-border rounded-md flex flex-col h-[500px]">
+          <div className="px-6 py-4 border-b border-border bg-zinc-950/50 flex justify-between items-center">
+            <h2 className="text-lg font-medium text-zinc-100 flex items-center">
+              <Play className="h-5 w-5 mr-2 text-indigo-400" />
               Pending Response Actions
               <Badge variant="warning" className="ml-3">{actions.length}</Badge>
             </h2>
@@ -101,18 +101,18 @@ export const Approvals: React.FC = () => {
           
           <div className="flex-1 overflow-y-auto p-4 space-y-4">
             {isLoading ? (
-              <div className="text-center text-gray-400 py-8">Loading queue...</div>
+              <div className="text-center text-zinc-400 py-8">Loading queue...</div>
             ) : actions.length === 0 ? (
-              <div className="h-full flex flex-col items-center justify-center text-gray-500 py-12">
+              <div className="h-full flex flex-col items-center justify-center text-zinc-500 py-12">
                 <ShieldCheck className="h-10 w-10 mb-3 opacity-50 text-emerald-500" />
                 <p>No response actions require your approval.</p>
               </div>
             ) : (
               actions.map(action => (
-                <div key={action.id} className="bg-background border border-amber-500/30 rounded-lg p-4">
+                <div key={action.id} className="bg-zinc-950 border border-amber-500/30 rounded-md p-4">
                   <div className="flex justify-between items-start mb-2">
                     <div>
-                      <h3 className="font-bold text-white flex items-center">
+                      <h3 className="font-bold text-zinc-100 flex items-center">
                         {action.action_type.replace(/_/g, ' ')}
                       </h3>
                       <div className="text-xs text-amber-500 mt-1 font-medium bg-amber-500/10 inline-block px-2 py-0.5 rounded">
@@ -124,12 +124,12 @@ export const Approvals: React.FC = () => {
                     </Badge>
                   </div>
                   
-                  <div className="text-sm text-gray-400 my-3">
+                  <div className="text-sm text-zinc-400 my-3">
                     <p>{action.description}</p>
-                    <div className="mt-2 text-xs font-mono bg-[#0D1117] p-2 rounded border border-border/50 truncate">
+                    <div className="mt-2 text-xs font-mono bg-zinc-950 p-2 rounded border border-border/50 truncate">
                       Target: {action.target}
                     </div>
-                    <div className="mt-2 text-xs text-gray-500 italic">
+                    <div className="mt-2 text-xs text-zinc-500 italic">
                       Rationale: {action.rationale}
                     </div>
                   </div>
@@ -143,7 +143,7 @@ export const Approvals: React.FC = () => {
                     </button>
                     <button 
                       onClick={() => handleActionReject(action.id)}
-                      className="flex-1 flex items-center justify-center py-2 bg-background border border-border text-gray-400 hover:bg-white/[0.02] hover:text-white rounded-md text-sm font-medium transition-colors"
+                      className="flex-1 flex items-center justify-center py-2 bg-zinc-950 border border-border text-zinc-400 hover:bg-zinc-800/30 hover:text-zinc-100 rounded-md text-sm font-medium transition-colors"
                     >
                       <X className="h-4 w-4 mr-2" /> Reject
                     </button>
@@ -155,9 +155,9 @@ export const Approvals: React.FC = () => {
         </div>
 
         {/* Proposed Findings */}
-        <div className="bg-panel border border-border rounded-lg flex flex-col h-[500px]">
-          <div className="px-6 py-4 border-b border-border bg-background/50 flex justify-between items-center">
-            <h2 className="text-lg font-medium text-white flex items-center">
+        <div className="bg-panel border border-border rounded-md flex flex-col h-[500px]">
+          <div className="px-6 py-4 border-b border-border bg-zinc-950/50 flex justify-between items-center">
+            <h2 className="text-lg font-medium text-zinc-100 flex items-center">
               <AlertTriangle className="h-5 w-5 mr-2 text-amber-500" />
               Proposed Findings
               <Badge variant="warning" className="ml-3">{findings.length}</Badge>
@@ -166,9 +166,9 @@ export const Approvals: React.FC = () => {
           
           <div className="flex-1 overflow-y-auto p-4 space-y-4">
             {isLoading ? (
-              <div className="text-center text-gray-400 py-8">Loading queue...</div>
+              <div className="text-center text-zinc-400 py-8">Loading queue...</div>
             ) : findings.length === 0 ? (
-              <div className="h-full flex flex-col items-center justify-center text-gray-500 py-12">
+              <div className="h-full flex flex-col items-center justify-center text-zinc-500 py-12">
                 <ShieldCheck className="h-10 w-10 mb-3 opacity-50 text-emerald-500" />
                 <p>No proposed findings to review.</p>
               </div>
@@ -176,19 +176,19 @@ export const Approvals: React.FC = () => {
               findings.map(finding => {
                 const incident = incidents[finding.incident_id];
                 return (
-                  <div key={finding.id} className="bg-background border border-border rounded-lg p-4">
+                  <div key={finding.id} className="bg-zinc-950 border border-border rounded-md p-4">
                     <div className="flex justify-between items-start mb-2">
-                      <h3 className="font-bold text-white text-sm">{finding.title}</h3>
-                      <div className="flex items-center text-xs text-gray-400 bg-[#0D1117] px-2 py-1 rounded border border-border/50">
+                      <h3 className="font-bold text-zinc-100 text-sm">{finding.title}</h3>
+                      <div className="flex items-center text-xs text-zinc-400 bg-zinc-950 px-2 py-1 rounded border border-border/50">
                         {Math.round((finding.confidence || 0) * 100)}% Conf.
                       </div>
                     </div>
                     
-                    <div className="text-sm text-gray-400 my-2 line-clamp-2">
+                    <div className="text-sm text-zinc-400 my-2 line-clamp-2">
                       {finding.description}
                     </div>
                     
-                    <div className="text-xs text-gray-500 mb-3 flex justify-between items-center">
+                    <div className="text-xs text-zinc-500 mb-3 flex justify-between items-center">
                       <span>Type: {finding.finding_type}</span>
                       {incident && (
                         <span>Incident INC-{(incident.id || 0).toString().padStart(4, '0')}</span>
@@ -198,13 +198,13 @@ export const Approvals: React.FC = () => {
                     <div className="flex space-x-3 pt-3 border-t border-border/50">
                       <button 
                         onClick={() => handleFindingApprove(finding.id)}
-                        className="flex-1 flex items-center justify-center py-1.5 bg-primary/10 text-primary hover:bg-primary/20 border border-primary/20 rounded-md text-xs font-medium transition-colors"
+                        className="flex-1 flex items-center justify-center py-1.5 bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500/10 border border-primary/20 rounded-md text-xs font-medium transition-colors"
                       >
                         <Check className="h-3 w-3 mr-1" /> Validate
                       </button>
                       <button 
                         onClick={() => handleFindingReject(finding.id)}
-                        className="flex-1 flex items-center justify-center py-1.5 bg-background border border-border text-gray-400 hover:bg-white/[0.02] hover:text-white rounded-md text-xs font-medium transition-colors"
+                        className="flex-1 flex items-center justify-center py-1.5 bg-zinc-950 border border-border text-zinc-400 hover:bg-zinc-800/30 hover:text-zinc-100 rounded-md text-xs font-medium transition-colors"
                       >
                         <X className="h-3 w-3 mr-1" /> False Positive
                       </button>

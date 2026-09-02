@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate, Navigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { ShieldAlert, Lock } from 'lucide-react';
+import { Activity, Lock } from 'lucide-react';
 import { Button } from '../components/Button';
+import { ThemeToggle } from '../components/ThemeToggle';
 
 export const Login: React.FC = () => {
   const [username, setUsername] = useState('');
@@ -43,11 +44,14 @@ export const Login: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-950 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4 relative">
+      <div className="absolute top-6 right-6">
+        <ThemeToggle />
+      </div>
       <div className="w-full max-w-md">
         <div className="text-center mb-10">
           <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-panel border border-border mb-4">
-            <ShieldAlert className="h-8 w-8 text-indigo-500" />
+            <Activity className="h-8 w-8 text-primary" />
           </div>
           <h1 className="text-3xl font-bold text-zinc-100 tracking-widest">CYRENIX</h1>
           <p className="text-zinc-400 mt-2">Incident Response Assistant</p>
@@ -55,7 +59,7 @@ export const Login: React.FC = () => {
 
         <div className="bg-panel border border-border rounded-md shadow-xl p-8 relative overflow-hidden">
           {/* Decorative elements */}
-          <div className="absolute top-0 left-0 w-full h-1 bg-indigo-500"></div>
+          <div className="absolute top-0 left-0 w-full h-1 bg-primary"></div>
           
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
@@ -67,7 +71,7 @@ export const Login: React.FC = () => {
                   type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="w-full bg-zinc-950 border border-border rounded-md px-4 py-2.5 text-zinc-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                  className="w-full bg-zinc-950 border border-border rounded-md px-4 py-2.5 text-sm text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
                   placeholder="Enter your username"
                   required
                 />
@@ -86,7 +90,7 @@ export const Login: React.FC = () => {
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-zinc-950 border border-border rounded-md pl-10 pr-4 py-2.5 text-zinc-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                  className="w-full bg-zinc-950 border border-border rounded-md pl-10 pr-4 py-2.5 text-sm text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
                   placeholder="••••••••"
                   required
                 />

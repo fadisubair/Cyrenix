@@ -1,6 +1,6 @@
 # CYRENIX
 
-## Evidence-Driven SOC Incident Response Platform
+## Evidence-Driven SOC Incident Response Platform   
 
 CYRENIX is a full-stack Security Operations Center (SOC) and incident-response platform designed to transform security telemetry into structured, explainable investigations and controlled response workflows.
 
